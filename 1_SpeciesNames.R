@@ -123,29 +123,3 @@ spp <- spp[-grep("Megadrile", spp$SpeciesBinomial, ignore.case = TRUE)]
 ###############################################
 
 write.csv(spp, file.path(data_out, paste("UniqueSpecies_", Sys.Date(), ".csv", sep ="")), row.names = FALSE)
-
-######################################
-## Match to any previous Google sheet
-######################################
-
-output <- "UniqueSpecies+FunctionalGroups"
-output <- gs_title(output)
-current <- as.data.frame(gs_read(output, ws = "sheet1"))
-
-## names(current) <- gsub("\\.y", "", names(current))
-## names(current) <- gsub("\\.x", "", names(current))
-
-
-spp <- merge(spp, current, by = "original")
-keep <- c("original","original_fg.x","Country","PaperID", "dataProvider.x", 
-          "drilobase.x", "Authority of species.x", "drilobase_fg.x", "Revised.y",
-          "Revised_fg.y","Revised_Authority.y","sWormMember.y", "X12") 
-spp <- spp[,which(names(spp) %in% keep)]
-
-spp$Revised.y[which(spp$sWormMember.y %in% c("Patrick Lavelle", "Patrick") & is.na(spp$Revised.y))] <- as.character(spp$original[which(spp$sWormMember.y %in% c("Patrick Lavelle", "Patrick") & is.na(spp$Revised.y))])
-# Because his notes were in a different column 
-
-names(spp) <- gsub("\\.y", "", names(spp))
-names(spp) <- gsub("\\.x", "", names(spp))
-
-write.csv(spp, file.path(data_out, paste("UniqueSpecies-Revised_", Sys.Date(), ".csv", sep ="")), row.names = FALSE)
