@@ -1,3 +1,10 @@
+# This script is a mess
+# But it takes the previously created version of species names
+# And tries to add to them
+# Correcting spelling mistakes, previous checks of earthworm names
+# and synonym checking on drilobase
+
+
 ########################################################
 # 1. Set Working Directory
 ########################################################
