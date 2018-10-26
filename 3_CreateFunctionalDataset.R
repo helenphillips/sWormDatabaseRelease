@@ -3,17 +3,17 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWorm\\EarthwormAnalysis\\")
+  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
 }
 
 ########################################################
 # 2. Create folder if it doesn't exist to save data into
 ########################################################
 
-if(!dir.exists("9_Data")){
-  dir.create("9_Data")
+if(!dir.exists("3_Data")){
+  dir.create("3_Data")
 }
-data_out <- "9_Data"
+data_out <- "3_Data"
 
 data_in_fg <- "RevisedSpeciesNames"
 data_in_spp <- "1_Data"
