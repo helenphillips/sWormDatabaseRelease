@@ -1,6 +1,6 @@
 # This script makes a list of all species names in the dataset. 
 # This list was given to the earthworm experts in sWorm to correct the
-# names and functional groups. A later script (XX) builds this.
+# names and functional groups. A later script (XX) builds on this.
 # 
 # A later section of the script uses any previous version of what was created,
 # so create an updated version.
@@ -143,6 +143,7 @@ keep <- c("original","original_fg.x","Country","PaperID", "dataProvider.x",
 spp <- spp[,which(names(spp) %in% keep)]
 
 spp$Revised.y[which(spp$sWormMember.y %in% c("Patrick Lavelle", "Patrick") & is.na(spp$Revised.y))] <- as.character(spp$original[which(spp$sWormMember.y %in% c("Patrick Lavelle", "Patrick") & is.na(spp$Revised.y))])
+# Because his notes were in a different column 
 
 names(spp) <- gsub("\\.y", "", names(spp))
 names(spp) <- gsub("\\.x", "", names(spp))
