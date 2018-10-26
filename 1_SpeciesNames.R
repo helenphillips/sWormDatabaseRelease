@@ -1,9 +1,22 @@
+# This script makes a list of all species names in the dataset. 
+# This list was given to the earthworm experts in sWorm to correct the
+# names and functional groups. A later script (XX) builds this.
+# 
+# A later section of the script uses any previous version of what was created,
+# so create an updated version.
+# 
+# This script is messy. I would do things differently now.
+# Sorry
+
+
+
+
 ########################################################
 # 1. Set Working Directory
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWorm\\EarthwormAnalysis\\")
+  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
 }
 
 ########################################################
@@ -20,7 +33,7 @@ data_out <- "1_Data"
 # 3. Libraries
 ########################################################
 
-source("Functions/FormatData.R")
+source(file.path("Functions", "FormatData.R"))
 library(dplyr)
 library(googlesheets)
 x <- gs_ls() ## Authentication
@@ -95,29 +108,6 @@ spp <- spp[-grep("microdrile", spp$SpeciesBinomial, ignore.case = TRUE),]
 spp <- spp[-grep("Megadrile", spp$SpeciesBinomial, ignore.case = TRUE)]
 
 
-#################################################
-# 9. DriloBASE data
-#################################################
-# 
-# drilobase <- "DriloBASE_uniqueSpecies"
-# drilobase <- gs_title(drilobase)
-# drilo <- as.data.frame(gs_read(drilobase, ws = "Sheet1"))
-# 
-# ###################################################
-# # 10. Map our dataset
-# ###############################################
-# 
-# s2 <- adist(spp$SpeciesBinomial, drilo$name)
-# i2 <- apply(s2, 1, which.min) ## Gives the index
-# spp$Drilobase <- drilo$name[i2]
-# 
-# cols <-c("SpeciesBinomial", "FunctionalGroup", "Country", "file", "provider", 
-#          "Drilobase", "Author of species", "ecologicalCategory")
-# spp <- (merge(spp, drilo, by.x = "Drilobase", by.y = "name", all.x = TRUE))
-# spp <- spp [,names(spp) %in% cols]
-# spp <- spp[,c(2, 3, 4, 5, 6, 1, 7, 8)]
-# names(spp) <- c("original", "original_fg", "Country", "PaperID", "dataProvider", "drilobase", "Authority of species", "drilobase_fg")
-# 
 # ###################################################
 # # 111. Add blank columns for people to fill in
 # ###############################################
@@ -133,33 +123,6 @@ spp <- spp[-grep("Megadrile", spp$SpeciesBinomial, ignore.case = TRUE)]
 ###############################################
 
 write.csv(spp, file.path(data_out, paste("UniqueSpecies_", Sys.Date(), ".csv", sep ="")), row.names = FALSE)
-
-#Also need to save to google sheets, which is where everyone will edit
-## This has been done, and until you download what people have filled in
-## DO NOT run this again
-## Also, it may not work
-
-# output <- "UniqueSpecies+FunctionalGroups"
-# output <- gs_title(output)
-# output <- (gs_gs(output))
-# 
-# t <- try(output <- output %>% 
-#   gs_ws_new(ws_title = "UniqueSpecies+FunctionalGroups", input = spp,
-#             trim = TRUE, verbose = FALSE), silent = TRUE)
-# 
-# if(class(t) == "try-error"){ ## Googlesheet already exists, need to delete old one
-#   output <- output %>% 
-#     gs_ws_delete(ws = "UniqueSpecies+FunctionalGroups")
-#   
-#   ## And upload new one
-#   output <- output %>% 
-#     gs_ws_new(ws_title = "UniqueSpecies+FunctionalGroups", input = spp,
-#               trim = TRUE, verbose = FALSE)
-#   
-# }
-# 
-# output %>% 
-#   gs_read(ws = 1)
 
 ######################################
 ## Match to any previous Google sheet
