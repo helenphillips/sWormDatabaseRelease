@@ -3,7 +3,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWorm\\EarthwormAnalysis\\")
+  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease\\")
 }
 
 ########################################################
@@ -21,8 +21,8 @@ data_out <- "0_Data"
 
 library(googlesheets)
 
-source("Functions/FormatData.R")
-source("Functions/CalculateSitelevelMetrics.R")
+source(file.path("Functions", "FormatData.R"))
+source(file.path("Functions","CalculateSitelevelMetrics.R"))
 
 ########################################################
 # 4. Access googledrive
@@ -47,7 +47,7 @@ colnames(bib) <- c(bib_names, "file")
 
 
 ######################################################
-# 5.5. Create template of site info for checking
+# 5.5. Create template of site and species info for checking
 #######################################################
 
 sitetemplate <- as.data.frame(gs_read(template_meta, ws = "Site-LevelData"))
@@ -63,9 +63,8 @@ all_files <- x$sheet_title[grep("^\\d*\\_", x$sheet_title, perl = TRUE)]
 cat(paste("\nFound", length(all_files), "datasheets"))
 
 options( warn = 2 )
+# So that if there are any errors it breaks the loops, so we know which file
 
-#all_bib <- list(length = length(bib_names))
-#names(all_bib) <- bib_names
 all_sites <- list()
 all_species <- list()
 
@@ -240,30 +239,7 @@ write.csv(sites, file = file.path(data_out, paste("sites_", Sys.Date(), ".csv", 
 write.csv(species, file = file.path(data_out, paste("species_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
 write.csv(bib, file = file.path(data_out, paste("Metadata_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
 
-########################################################
-# 11. Save the data for Carlos
-########################################################
-
-# carlos_sites <- sites[,c("ID", "Latitude__decimal_degrees", "Longitude__Decimal_Degrees")]
-# names(carlos_sites) <- c("ID", "LAT", "LONG")
-# write.csv(carlos_sites, file = file.path(data_out, paste("sitesIDLatLong_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
 
 
-########################################################
-# 11. Save the data for Erin and Olga
-########################################################
+options( warn = 0 ) # the default
 
-# eo_sites <- sites[1:200,]
-# 
-# eo_species <- species[7500:8159,]
-# 
-# toDel <- c("file.y", "Study_Name", "Site_Name.y", "SpeciesRichness", 
-#            "SpeciesRichnessUnit","Site_WetBiomass","Site_WetBiomassUnits",   
-#            "Site_Abundance","Site_AbundanceUnits","NumberofSpecies",
-#            "Individuals_fromspecies","Individuals_fromspeciesUnits", 
-#            "Biomass_fromspecies","Biomass_fromspeciesUnits")
-# 
-# eo_species[,which(names(eo_species) %in% toDel)] <- NULL
-# 
-# write.csv(eo_species, file = file.path(data_out, paste("speciesExample_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
-# write.csv(eo_sites, file = file.path(data_out, paste("sitesExample", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
