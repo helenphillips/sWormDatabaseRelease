@@ -64,7 +64,7 @@ bib <- read.csv(file.path(data_in, loadinbib))
 # 6. Quick investigation
 #################################################
 
-length(unique(dat$SpeciesBinomial)) ##  306
+length(unique(dat$SpeciesBinomial)) ##   304
 
 table(dat$Functional_Type) ## Only unknown for  821
 
@@ -93,7 +93,11 @@ result <- dat %>%
 
 spp <- as.data.frame(result)
 ## Remove line that isn't a species
-spp <- spp[-which(is.na(spp$SpeciesBinomial)),]
+spp <- spp[-which(is.na(spp$SpeciesBinomial)),] # 303
+
+# Drilobase sometimes contains multiple functional groups for each earthworm species
+# Previous function merged them all together
+# Some contained NAs and unknowns, so this removes them from the string
 spp$fg <- gsub("NA, ", "", spp$fg)
 spp$fg <- gsub(", NA", "", spp$fg)
 spp$fg <- gsub("Unknown, ", "", spp$fg)
@@ -104,12 +108,13 @@ names(spp)[2] <- "FunctionalGroup"
 
 
 ## Remove Microdriles and Megadriles
+# This have been included by accident
 spp <- spp[-grep("microdrile", spp$SpeciesBinomial, ignore.case = TRUE),]
 spp <- spp[-grep("Megadrile", spp$SpeciesBinomial, ignore.case = TRUE)]
 
 
 # ###################################################
-# # 111. Add blank columns for people to fill in
+# # 8. Add blank columns for people to fill in
 # ###############################################
 # 
 # 
