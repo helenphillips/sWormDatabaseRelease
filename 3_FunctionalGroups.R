@@ -4,22 +4,22 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWorm\\EarthwormAnalysis\\")
+  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
 }
 
-source("Functions/FormatData.R")
-
+source(file.path("Functions", "FormatData.R"))
+library(plyr)
 library(dplyr)
 library(reshape2)
-library(plyr)
+
 ########################################################
 # 2. Create folder if it doesn't exist to save data into
 ########################################################
 
-if(!dir.exists("10_Data")){
-  dir.create("10_Data")
+if(!dir.exists("3_Data")){
+  dir.create("3_Data")
 }
-data_out <- "10_Data"
+data_out <- "3_Data"
 
 
 #################################################
@@ -27,10 +27,11 @@ data_out <- "10_Data"
 #################################################
 ## Species data
 
-data_in_spp <-"9_Data"
-files <- list.files(file.path(data_in_spp))
+
 ## This is a file I made manually, by combining data from George and Maria (also in this folder)
 loadinfg <- "Unique_Species_toSend2018-06-05_Final.csv"
+# Drilobase was also used to check for synonyms and add in functional groups where possible
+
 ## Some species identifications are in press - look at George's final file to identify. 
 # Guillaume Rosseau would need to be contacted to get the ecological categories
 
@@ -38,7 +39,7 @@ loadinfg <- "Unique_Species_toSend2018-06-05_Final.csv"
 ## Site data
 
 
-data_in_sites <-"3.5_Data"
+data_in_sites <-"2_Data"
 
 files <- list.files(file.path(data_in_sites))
 file_dates <- sapply(strsplit(files, "_"), "[", 2) ## Split the string by date, which produces a list, then take second element of each list i.e. the date
@@ -53,8 +54,8 @@ rm(date)
 
 ### Species data
 
-data_in_spp2 <-"0_Data"
-files <- list.files(file.path(data_in_spp2))
+data_in_spp <-"0_Data"
+files <- list.files(file.path(data_in_spp))
 files <- files[grep("species_", files)]
 file_dates <- sapply(strsplit(files, "_"), "[", 2) ## Split the string by date, which produces a list, then take second element of each list i.e. the date
 file_dates <- sapply(strsplit(file_dates, "\\."), "[", 1) ## Split the string by date, which produces a list, then take first element of each list i.e. the date
@@ -68,8 +69,12 @@ loadin_spp <- files[grep(date, files)]
 #################################################
 
 sites <- read.csv(file.path(data_in_sites, loadin))
-spp <- read.csv(file.path(data_in_spp, loadinfg))
-spp_dat <- read.csv(file.path(data_in_spp2, loadin_spp)) # 20726
+spp <- read.csv(file.path("RevisedSpeciesNames", loadinfg))
+spp_dat <- read.csv(file.path(data_in_spp, loadin_spp)) # 20726
+
+spp_dat$newID <- paste(spp_dat$file.x, spp_dat$Study_Name, spp_dat$Site_Name.x)
+sites$newID <- paste(sites$file, sites$Study_Name, sites$Site_Name)
+
 
 #################################################
 # 5. Tidy up categories in spp
@@ -114,61 +119,9 @@ spp_dat$Revised_fg[toFill] <- spp_dat$Functional_Type[toFill]
 missing <- which(is.na(spp_dat$Revised_fg))
 spp_dat$Revised_fg[missing] <- "Unknown"
 
+names(spp_dat)[names(spp_dat) == "Revised"] <- "Revised_Binomial"
 #################################################
-# 9. Sort out units of diversity measures
-#################################################
-
-spp_dat$species_Biomassm2 <- NA
-levels(spp_dat$WetBiomassUnits)
-
-spp_dat$species_Biomassm2[which(spp_dat$WetBiomassUnits == "g/m2")] <- 
-  spp_dat$WetBiomass[which(spp_dat$WetBiomassUnits == "g/m2")]
-
-# mg/m2 -> g/m2 = divide by 1000
-spp_dat$species_Biomassm2[which(spp_dat$WetBiomassUnits == "mg/m2")] <- 
-  spp_dat$WetBiomass[which(spp_dat$WetBiomassUnits == "mg/m2")] /1000
-
-## convert g to g/m2, divide by the sampled area (in m2)
-table(spp_dat$Sampled_Area_Unit[which(spp_dat$WetBiomassUnits == "g")])
-
-spp_dat$species_Biomassm2[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "m2")] <-
-  spp_dat$WetBiomass[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "m2")] / spp_dat$Sampled_Area[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "m2")]
-
-
-## cm2 >- m2 = divide by 10000
-spp_dat$species_Biomassm2[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "cm2")] <-
-  spp_dat$WetBiomass[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "cm2")] / (spp_dat$Sampled_Area[which(spp_dat$WetBiomassUnits == "g" & spp_dat$Sampled_Area_Unit == "cm2")] / 10000)
-
-summary(spp_dat$species_Biomassm2)
-summary(spp_dat$Biomass_fromspecies)
-##########################################################
-## Abundance values
-
-table(spp_dat$Abundance_Unit)
-
-spp_dat$species_Abundancem2 <- NA
-spp_dat$species_Abundancem2[which(spp_dat$Abundance_Unit == "Individuals per m2")] <- spp_dat$Abundance[which(spp_dat$Abundance_Unit == "Individuals per m2")]
-## individuals per m3 is basically the same per m2
-spp_dat$species_Abundancem2[which(spp_dat$Abundance_Unit == "Individuals per m3")] <- spp_dat$Abundance[which(spp_dat$Abundance_Unit == "Individuals per m3")]
-
-
-# number of individual when sampled area is in m2
-table(spp_dat$Sampled_Area_Unit[which(spp_dat$Abundance_Unit == "Number of individuals")])
-
-spp_dat$species_Abundancem2[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "m2")] <-
-  spp_dat$Abundance[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "m2")] / spp_dat$Sampled_Area[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "m2")]
-
-
-## When in cm2
-spp_dat$species_Abundancem2[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "cm2")] <-
-  spp_dat$Abundance[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "cm2")] / (spp_dat$Sampled_Area[which(spp_dat$Abundance_Unit == "Number of individuals" & spp_dat$Sampled_Area_Unit == "cm2")] / 10000)
-
-# unique(sites$file[which(sites$Site_AbundanceUnits == "Number of individuals" & sites$Sampled_Area_Unit == "m3")])
-summary(spp_dat$species_Abundancem2)
-
-
-#################################################
-# 9.5 Save this dataset
+# 9 Save this dataset
 #################################################
 
 write.csv(spp_dat, file = file.path(data_out, paste("SpecieswithFunctionalGroups_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
@@ -176,23 +129,24 @@ write.csv(spp_dat, file = file.path(data_out, paste("SpecieswithFunctionalGroups
 #################################################
 # 10. Create the dataframe
 #################################################
+# This create site-level abundances and biomasses
 
-spp_dat$newID <- paste(spp_dat$file.x, spp_dat$Study_Name, spp_dat$Site_Name.x)
-sites$newID <- paste(sites$file, sites$Study_Name, sites$Site_Name)
 detach(package:plyr) 
 Summary.div <- spp_dat %>% # Start by defining the original dataframe, AND THEN...
   group_by(newID) %>% # Define the grouping variable, AND THEN...
   summarize( # Now you define your summary variables with a name and a function...
-    Epi_biomass = sum(species_Biomassm2[which(Revised_fg == "Epigeic")], na.rm = TRUE),
-    Endo_biomass = sum(species_Biomassm2[which(Revised_fg == "Endogeic")], na.rm = TRUE),
-    Ane_biomass = sum(species_Biomassm2[which(Revised_fg == "Anecic")], na.rm = TRUE),
-    EpiEndo_biomass = sum(species_Biomassm2[which(Revised_fg == "Epi-Endogeic")], na.rm = TRUE),
-    Unknown_biomass = sum(species_Biomassm2[which(Revised_fg == "Unknown")], na.rm = TRUE),
-    Epi_abundance = sum(species_Abundancem2[which(Revised_fg == "Epigeic")], na.rm = TRUE),
-    Endo_abundance = sum(species_Abundancem2[which(Revised_fg == "Endogeic")], na.rm = TRUE),
-    Ane_abundance = sum(species_Abundancem2[which(Revised_fg == "Anecic")], na.rm = TRUE),
-    EpiEndo_abundance = sum(species_Abundancem2[which(Revised_fg == "Epi-Endogeic")], na.rm = TRUE),
-    Unknown_abundance = sum(species_Abundancem2[which(Revised_fg == "Unknown")], na.rm = TRUE)
+    Epi_biomass = sum(Biomass_fromspecies[which(Revised_fg == "Epigeic")], na.rm = TRUE),
+    Endo_biomass = sum(Biomass_fromspecies[which(Revised_fg == "Endogeic")], na.rm = TRUE),
+    Ane_biomass = sum(Biomass_fromspecies[which(Revised_fg == "Anecic")], na.rm = TRUE),
+    EpiEndo_biomass = sum(Biomass_fromspecies[which(Revised_fg == "Epi-Endogeic")], na.rm = TRUE),
+    Unknown_biomass = sum(Biomass_fromspecies[which(Revised_fg == "Unknown")], na.rm = TRUE),
+    FG_biomass_units = unique(Biomass_fromspeciesUnits),
+    Epi_abundance = sum(Individuals_fromspecies[which(Revised_fg == "Epigeic")], na.rm = TRUE),
+    Endo_abundance = sum(Individuals_fromspecies[which(Revised_fg == "Endogeic")], na.rm = TRUE),
+    Ane_abundance = sum(Individuals_fromspecies[which(Revised_fg == "Anecic")], na.rm = TRUE),
+    EpiEndo_abundance = sum(Individuals_fromspecies[which(Revised_fg == "Epi-Endogeic")], na.rm = TRUE),
+    Unknown_abundance = sum(Individuals_fromspecies[which(Revised_fg == "Unknown")], na.rm = TRUE),
+    FG_abundance_units = unique(Individuals_fromspeciesUnits)
   )
 
 summary.div <- as.data.frame(Summary.div)
@@ -204,7 +158,7 @@ str(summary.div)
 ########################################################
 
 juvs <- which(spp_dat$LifeStage == "Juvenile")
-notSpecies <- which(is.na(spp_dat$Revised) & is.na(spp_dat$MorphospeciesID))
+notSpecies <- which(is.na(spp_dat$Revised_Binomial) & is.na(spp_dat$MorphospeciesID))
 
 notSp <- union(juvs, notSpecies)
 spR <- spp_dat[-notSp,]
