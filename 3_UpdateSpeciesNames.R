@@ -22,7 +22,7 @@ if(!dir.exists("3_Data")){
 }
 data_out <- "3_Data"
 
-data_in_fg <- "RevisedSpeciesNames"
+# data_in_fg <- "RevisedSpeciesNames"
 data_in_spp <- "1_Data"
 ########################################################
 # 3. Libraries
