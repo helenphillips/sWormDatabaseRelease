@@ -4,7 +4,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
+  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
 }
 
 source(file.path("Functions", "FormatData.R"))

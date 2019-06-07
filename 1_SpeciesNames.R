@@ -16,7 +16,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
+  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
 }
 
 ########################################################
@@ -64,9 +64,9 @@ bib <- read.csv(file.path(data_in, loadinbib))
 # 6. Quick investigation
 #################################################
 
-length(unique(dat$SpeciesBinomial)) ##   304
+length(unique(dat$SpeciesBinomial)) ##   311
 
-table(dat$Functional_Type) ## Only unknown for  821
+table(dat$Functional_Type) ## Unknowns are also blank
 
 ## Check that all are binomials
 which(

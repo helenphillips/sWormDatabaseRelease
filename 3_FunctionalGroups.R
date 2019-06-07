@@ -4,7 +4,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease")
+  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
 }
 
 source(file.path("Functions", "FormatData.R"))
@@ -194,3 +194,4 @@ sites_fg <- merge(sites_fg, t2, by.x = "newID", by.y = "newID", all.x = TRUE)
 
 
 write.csv(sites_fg, file = file.path(data_out, paste("SiteswithFunctionalGroups_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
+

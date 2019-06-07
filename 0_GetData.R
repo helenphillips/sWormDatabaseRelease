@@ -3,7 +3,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\Users\\hp39wasi\\sWormDatabaseRelease\\")
+  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease\\")
 }
 
 ########################################################
@@ -28,9 +28,9 @@ source(file.path("Functions","CalculateSitelevelMetrics.R"))
 # 4. Access googledrive
 ########################################################
 
+
+# gs_token <- gs_auth(cache = FALSE, new_user = TRUE)
 x <- gs_ls() ## Authentication
-
-
 
 ########################################################
 # 5. Create dataframe for bibliographic and author info
@@ -61,7 +61,9 @@ speciestemplate <- as.data.frame(gs_read(template_meta, ws = "Species-LevelData"
 all_files <- x$sheet_title[grep("^\\d*\\_", x$sheet_title, perl = TRUE)]
 
 cat(paste("\nFound", length(all_files), "datasheets"))
-
+# sink("test.log", type=c("output", "message"))
+print(all_files)
+# sink()
 options( warn = 2 )
 # So that if there are any errors it breaks the loops, so we know which file
 
@@ -72,11 +74,13 @@ all_species <- list()
 # 7. Start processing data
 ########################################################
 
+
 count <- 0
 
 for(file in all_files){
   count <- count + 1
   f <- gs_title(file)
+  print(f)
   meta <- as.data.frame(gs_read(f, ws = "MetaData", col_names = FALSE))
   sites <- as.data.frame(gs_read(f, ws = "Site-LevelData"))
   species <- as.data.frame(gs_read(f, ws = "Species-LevelData"))
