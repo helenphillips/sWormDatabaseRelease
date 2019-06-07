@@ -90,11 +90,11 @@ labs <- names(table(sites$ExtractionMethod))
 labs <- gsub("Formaldehyde", "Formalin", labs)
 
 labs <- c("Hand sorting",                         
-"Hand sorting + \n Liquid Extraction (Formalin)",
-"Hand sorting + \n Liquid extraction (Mustard)",
-"Liquid Extraction \n (Formalin)",      
-"Liquid extraction \n (Mustard)",
-"Octet Method \n (electric shock)",              
+"Hand sorting + \n Chemical extraction (Formalin)",
+"Hand sorting + \n Chemical extraction (Mustard)",
+"Chemical extraction \n (Formalin)",      
+"Chemical extraction \n (Mustard)",
+"Octet method \n (electric shock)",              
 "Other",                          
 "Other Multiple",                       
 "Unknown")     
