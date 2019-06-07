@@ -122,9 +122,9 @@ SiteLevels <- function(sites){
                                                               "Urban","Bare area (consolidated",
                                                               "Paddy field","Wetland", "Water bodies", "Unknown"))
   
-  sites$LU_Mgmt <- factor(sites$LU_Mgmt, levels = c( "Primary vegetation", "Secondary vegetation", "Pastures (grazed lands)", "Annual crop", 
+  sites$Management_System <- factor(sites$Management_System, levels = c( "None", "Pastures (grazed lands)", "Annual crop", 
                                                      "Perennial crops", "Integrated systems", "Tree plantations", 
-                                                     "Urban", "Unknown" ))
+                                                     "Unknown" ))
   
   if("ESA" %in% names(sites))
      {
