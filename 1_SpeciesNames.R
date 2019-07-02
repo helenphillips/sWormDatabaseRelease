@@ -64,7 +64,7 @@ bib <- read.csv(file.path(data_in, loadinbib))
 # 6. Quick investigation
 #################################################
 
-length(unique(dat$SpeciesBinomial)) ##   311
+length(unique(dat$SpeciesBinomial)) ##   313
 
 table(dat$Functional_Type) ## Unknowns are also blank
 
