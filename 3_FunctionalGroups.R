@@ -29,7 +29,7 @@ data_out <- "3_Data"
 
 
 ## This is a file I made manually, by combining data from George and Maria (also in this folder)
-loadinfg <- "Unique_Species_toSend2018-06-05_Final.csv"
+loadinfg <- "UniqueSpeciestoSend_2019-06-19_Final.csv"
 # Drilobase was also used to check for synonyms and add in functional groups where possible
 
 ## Some species identifications are in press - look at George's final file to identify. 
