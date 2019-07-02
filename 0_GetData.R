@@ -179,10 +179,11 @@ for(file in all_files){
     sites$Biomass_fromspeciesUnits <- NA}
   
   ## Now to make a species level dataframe with all the variables in
-  if(nrow(species) > 0){site_species <- merge(species, sites, by.x = "Study_site", by.y = "Study_site", all.x = TRUE)
-  all_species[[count]] <- site_species
-    }
+ # if(nrow(species) > 0){site_species <- merge(species, sites, by.x = "Study_site", by.y = "Study_site", all.x = TRUE)
+ #  all_species[[count]] <- site_species
+ #   }
   
+  all_species[[count]] <- species
   
   all_sites[[count]] <- sites
   
