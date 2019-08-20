@@ -1,50 +1,45 @@
 
-########################################################
-# 1. Set Working Directory
-########################################################
+
+## WORKING DIRECTORY ----------------------------
+
 
 if(Sys.info()["nodename"] == "IDIVNB193"){
   setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
 }
 
 
+if(Sys.info()["nodename"] == "IDIVNB179"){
+  setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
+}
+
+
+## PACKAGES AND VARS ---------------------------------------
 
 library(maps)
 library(maptools)
 library(dplyr)
 library( plotrix )
 
-########################################################
-# 2. Create folder if it doesn't exist to save data into
-########################################################
-
 if(!dir.exists("Figures")){
   dir.create("Figures")
 }
 figures <- "Figures"
 
-########################################################
-# 3. Load data
-########################################################
 data_in <-"3_Data"
-files <- list.files(file.path(data_in))
-files <- files[grep("SiteswithFunctionalGroups_", files)]
-file_dates <- sapply(strsplit(files, "_"), "[", 2) ## Split the string by date, which produces a list, then take second element of each list i.e. the date
-file_dates <- sapply(strsplit(file_dates, "\\."), "[", 1) ## Split the string by date, which produces a list, then take first element of each list i.e. the date
 
-file_dates <- as.Date(file_dates)
-date <- max(file_dates, na.rm = TRUE)
-loadin <- files[grep(date, files)]
+source('Functions/loadMostRecent.R')
 
+## LOAD DATA -----------------------------------------
 
-sites <- read.csv(file.path(data_in, loadin))
+sites <- loadMostRecent_2("SiteData_", data_in)
+sites <- read.csv(file.path(data_in, sites))
 
 #######################################################
 # 4. Create map of all studies
 ########################################################
 
 sitecoords <- sites[!(is.na(sites$Latitude__decimal_degrees)),]
-coord<-aggregate(cbind(sitecoords$Longitude__Decimal_Degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
+coord<-aggregate(cbind(sitecoords$Longitude__decimal_degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
 
 
 all(coord$X == names(table(sites$Study_Name)))
@@ -159,15 +154,16 @@ HCLabs <- c(
   "Broadleaf deciduous forest", "Broadleaf evergreen forest", "Needleleaf deciduous forest",
   "Needleleaf evergreen forest", "Mixed forest", "Tree open", "Herbaceous \nwith spare tree/shrub",
   "Shrub", "Herbaceous", "Sparse vegetation", 
-  "Cropland/Other \nvegetation mosaic",  "Urban", "Bare area",
-  "Paddy field",  "Water bodies", "Unknown")
+  "Cropland/Other \nvegetation mosaic",  "Urban",  "Bare area (consolidated)",
+  "Bare area (unconsolidated)",
+  "Paddy field", "Wetland/Herbaceous", "Water bodies", "Unknown")
 
 
 
 
 sites$HabitatCover <- droplevels(sites$HabitatCover)
 par(mar = c(12, 4, 1, 4))
-b <- barplot(table(sites$HabitatCover), axisnames = FALSE, xaxs = "i", xlim=c(0, 20))
+b <- barplot(table(sites$HabitatCover), axisnames = FALSE, xaxs = "i", xlim=c(0, 22))
 axis(1, at = b, labels = HCLabs, las = 2)
 mtext("(b)", side = 3, line = 0, at = 0, adj = 0.5)
 
@@ -184,7 +180,7 @@ nStudies <- as.data.frame(nStudies)
 nStudies <- nStudies[!(is.na(nStudies$HabitatCover)), ] 
 
 par(new=TRUE)
-plot(b,nStudies[,2],xaxs = "i",pch = 19,col="red",axes=FALSE,ylim=c(0,100),ann=FALSE, xlim=c(0, 20))
+plot(b,nStudies[,2],xaxs = "i",pch = 19,col="red",axes=FALSE,ylim=c(0,100),ann=FALSE, xlim=c(0, 22))
 axis(4,at=seq(0,100,10), las = 2)
 mtext("Number of studies (red dots)", line =  2.5, side = 4)
 
@@ -405,9 +401,9 @@ mtext("(a)", side = 3, line = 0, at = 0, adj = 0.1)
 ########################################################
 
 ## Sites
-colsNeeded <- c("newID", "Site_Name", "SpeciesRichness", "Site_WetBiomass", "Site_Abundance")
+colsNeeded <- c("Site_Name", "SpeciesRichness", "Site_WetBiomass", "Site_Abundance")
 summary.df <- sites[,which(names(sites) %in% colsNeeded)]
-names(summary.df) <- c("newID", "Site_Name", "richness", "biomass", "abundance")
+names(summary.df) <- c("Site_Name", "richness", "biomass", "abundance")
 
 summary.df$RandB <- summary.df$richness + summary.df$biomass
 summary.df$RandA <- summary.df$richness + summary.df$abundance

@@ -10,6 +10,11 @@ if(Sys.info()["nodename"] == "IDIVNB193"){
   setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
 }
 
+if(Sys.info()["nodename"] == "IDIVNB179"){
+  setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
+}
+
+
 data_in <-"0_Data"
 
 if(!dir.exists("2_Data")){
@@ -21,6 +26,7 @@ data_out <- "2_Data"
 ## FUNCTIONS AND PACKAGES --------------
 
 source("Functions/loadMostRecent.R")
+source("Functions/orderDF.R")
 
 
 ## LOAD BIB DATA ------------------------------------
@@ -40,9 +46,15 @@ colsToRemove <- c("DataProvider_Title","DataProvider_Surname",
 
 bib <- bib[,-(which(names(bib) %in% colsToRemove))]
 
+
+## REORDER BIB FILES ---------------------------------
+
+bib <- arrange.vars(bib, c("file"=1))
+
+                           
 ## SAVE NEW BIB FILE -------------------------------------
 
-write.csv(bib, file = file.path(data_out, paste0("MetaData_sWorm_", Sys.Date(), ".csv")))
+write.csv(bib, file = file.path(data_out, paste0("MetaData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
 
 
 ## LOAD SITE DATA ------------------------------------------
@@ -93,7 +105,7 @@ sites$HabitatCover[which(is.na(sites$HabitatCover))] <- "Unknown"
 
 ## SAVE NEW SITE FILE -------------------------------------
 
-write.csv(sites, file = file.path(data_out, paste0("SitesData_sWorm_", Sys.Date(), ".csv")))
+write.csv(sites, file = file.path(data_out, paste0("SitesData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
 
 
 ## LOAD THE SPECIES DATA ---------------------------------------
@@ -159,5 +171,5 @@ names(spp)[which(names(spp) == "Revised_fg")] <- "Ecological_group"
 
 ## SAVE SPECIES FILE --------------------------------------
 
-write.csv(spp, file = file.path(data_out, paste0("SppData_sWorm_", Sys.Date(), ".csv")))
+write.csv(spp, file = file.path(data_out, paste0("SppData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
 

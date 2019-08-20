@@ -6,6 +6,10 @@ if(Sys.info()["nodename"] == "IDIVNB193"){
   setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease\\")
 }
 
+if(Sys.info()["nodename"] == "IDIVNB179"){
+  setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
+}
+
 ########################################################
 # 2. Create folder if it doesn't exist to save data into
 ########################################################
