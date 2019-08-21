@@ -27,8 +27,8 @@ authors <- droplevels(authors[authors$I.would.like.to.be.an.author.on.this.data.
 
 table(authors$Do.you.have.more.institutions..1) ## Can remove the columns for third institution
 notneededCols <- c("Timestamp",  "Email.address",                                                                                            
- "I.consent.to.my.data.being.used.in.this.paper",                                                                         
- "I.would.like.to.be.an.author.on.this.paper",                                                                         
+ "I.consent.to.my.data.being.made.open.access",                                                                         
+ "I.would.like.to.be.an.author.on.this.data.paper",                                                                         
 "Do.you.have.more.institutions..1",                                                                         
  "Department.Name.2",                                                                              
  "Research.Centre.Name.2",                                                                                                
@@ -97,7 +97,7 @@ authors <- authors[-(grep("Cameron", authors$lastName)), ]
 authors <- authors[-(grep("Bartz", authors$lastName)), ]
 authors <- authors[-(grep("Mulder", authors$lastName)), ]
 
-# 120
+# 119
 
 
 
@@ -139,6 +139,7 @@ levels(authors$Country)[levels(authors$Country) == "United States of America"] <
 authors$Country <- as.character(authors$Country)
 authors$Country[authors$Country == "the Netherlands"] <- "The Netherlands" 
 authors$Country[authors$Country == "Netherlands"] <- "The Netherlands" 
+authors$Country[authors$firstName == "Basil"] <- "USA"
 
 authors$Country <- as.factor(authors$Country)
 
@@ -172,6 +173,12 @@ authors$City[authors$City == "Jyvaskyla"] <- "Jyväskylä"
 authors$City[authors$City == "RIO CUARTO"] <- "Río Cuarto"
 authors$City[authors$City == "Saint Paul"] <- "St Paul"
 authors$City[authors$City == "Toronto, Ontario"] <- "Toronto"
+authors$City[authors$City == "Montpellier Cedex 2"] <- "Montpellier"
+authors$City[authors$City == "Montpellier cedex 2"] <- "Montpellier"
+authors$City[authors$City == "Poitiers Cedex 9"] <- "Poitiers"
+
+authors$City[authors$City == "Dublin 4"] <- "Dublin"
+
 
 
 
@@ -205,8 +212,11 @@ authors$Postcode <- gsub('\"', '', authors$Postcode)
 Alist <- data.frame(author = NA, dummyInst = 0)
 
 
-countries <- unique(authors$Country)
 
+authors <- droplevels(authors)
+
+countries <- unique(authors$Country)
+## The empty country was Basil
 
 for(c in 1:length(countries)) {
         country <- authors[which(authors$Country == countries[c]), ]
@@ -345,8 +355,8 @@ for(c in 1:length(countries)) {
         }
 }
 
-write.csv(Alist, file = "data/Phillips/part1.csv", row.names = FALSE)
-Alist <- read.csv("data/Phillips/part1.csv")
+write.csv(Alist, file = "Authorship\\Authorlist_part1.csv", row.names = FALSE)
+Alist <- read.csv("Authorship\\Authorlist_part1.csv")
 Blist <- Alist
 ## SECOND ADDRESS -------
 table(authors$Do.you.have.more.institutions.)
@@ -366,15 +376,17 @@ names(second)[which(names(second) == "Postcode.Zipcode..please.put.quotation.mar
 names(second)[which(names(second) == "Country.1")] <- "Country"
 names(second)[which(names(second) == "City.1")] <- "City"
 
-
+second <- droplevels(second)
 ## RENAME COUNTRY --------------------
-levels(second$Country)[levels(second$Country) == "México"] <- "Mexico"
-levels(second$Country)[levels(second$Country) == "Brasil"] <- "Brazil"
+levels(second$Country)[levels(second$Country) == "Netherlands"] <- "The Netherlands"
 levels(second$Country)[levels(second$Country) == "United States"] <- "USA"
 
-## SOMEONE FILLED OUT THE FORM WRONG -------------------
 
-second <- second[which(second$Country != ""),]
+## RENAME CITIES -----------------------
+unique(second$City)
+
+second$City[second$City == "Dublin 4"] <- "Dublin"
+
 
 ## REMOVE WHITE SPACE ---------
 
@@ -408,7 +420,7 @@ for(r in 1:nrow(second)){
         country <- as.character(country)
         authors$Country <- as.character(authors$Country)
         temp <- authors[authors$Country == country,]
-        
+      
         cat("----------\n")
         print(temp$Address1)
         inOne <- readline("Is the first address in any of these?(y/n)")
@@ -421,9 +433,15 @@ for(r in 1:nrow(second)){
                 
                 inst <- temp$Address1[whichOne]
                 
+                
+                
+                
                 print("Appending to original dataframe")
                 
-                which(Alist[1,] == inst)
+                whichCol <- which(names(Alist) == inst)
+                whichName <- which(Alist$author == second$FullName[r])
+                
+                Alist[whichName, whichCol] <- 1
         }else{
                 # Add to the dataframe
                 print("adding to the dataframe")
