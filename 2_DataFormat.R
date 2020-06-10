@@ -99,6 +99,11 @@ sites$HabitatCover <- as.character(sites$HabitatCover)
 sites$HabitatCover[which(is.na(sites$HabitatCover))] <- "Unknown"
 
 
+
+## FIXING COUNTRY NAMES -----------------------------------
+
+
+
 ## CHANGE THE ORDER OF SITE COLUMNS --------------------------
 
 ## Actually, they are in the correct order

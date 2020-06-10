@@ -39,12 +39,7 @@ sites <- read.csv(file.path(data_in, sites))
 ########################################################
 
 sitecoords <- sites[!(is.na(sites$Latitude__decimal_degrees)),]
-coord<-aggregate(cbind(sitecoords$Longitude__decimal_degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
-
-
-all(coord$X == names(table(sites$Study_Name)))
-
-coord <- cbind(coord, table(sites$Study_Name))
+coord<-aggregate(cbind(sitecoords$Longitude__Decimal_Degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
 
 
 # coord$X<-coord$Group.1
@@ -197,14 +192,19 @@ Summary.df <- sites %>% # Start by defining the original dataframe, AND THEN...
   group_by(Study_Name) %>% # Define the grouping variable, AND THEN...
   summarise( # Now you define your summary variables with a name and a function...
     N_sites = n(),  ## The function n() in dlpyr gives you the number of observations
-    richness = var(SpeciesRichness),
-    biomass = var(Site_WetBiomass),
-    abundance = var(Site_Abundance)
+    richness = sum(SpeciesRichness, na.rm = TRUE), # Because some sites were missing observations, others not, in 4 studies
+    biomass = sum(Site_WetBiomass, na.rm = TRUE),
+    abundance = sum(Site_Abundance, na.rm = TRUE)
 
   )
 
 head(Summary.df)
 summary.df <- as.data.frame(Summary.df)
+
+summary.df$richness <- ifelse(summary.df$richness == 0, NA, summary.df$richness)
+summary.df$biomass <- ifelse(summary.df$biomass == 0, NA, summary.df$biomass)
+summary.df$abundance <- ifelse(summary.df$abundance == 0, NA, summary.df$abundance)
+# Because if all sites had no observations its a 0, not NA
 
 summary.df$RandB <- summary.df$richness + summary.df$biomass
 summary.df$RandA <- summary.df$richness + summary.df$abundance
@@ -216,7 +216,7 @@ all3 <- summary.df$all3
 all3 <- all3[complete.cases(all3)]
 all3 <- length(all3)
 
-summaryonly2 <- summary.df[which(is.na(summary.df$all3)),]
+summaryonly2 <- droplevels(summary.df[which(is.na(summary.df$all3)),])
 RandB <- nrow(summaryonly2[complete.cases(summaryonly2$RandB),])
 RandA <- nrow(summaryonly2[complete.cases(summaryonly2$RandA),])
 AandB <- nrow(summaryonly2[complete.cases(summaryonly2$AandB),])
@@ -388,7 +388,7 @@ text(x = 1.7, y = 1.4, labels = "Abundance", cex = 1.5)
 text(x = 5, y = 8, labels = "Richness", cex = 1.5)
 text(x = 8.7, y = 1.4, labels = "Biomass", cex = 1.5)
 
-mtext("(a)", side = 3, line = 0, at = 0, adj = 0.1)
+mtext("(a)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
 
 
 
@@ -571,7 +571,7 @@ text(x = 5, y = 8, labels = "Richness", cex = 1.5)
 text(x = 8.7, y = 1.4, labels = "Biomass", cex = 1.5)
 
 
-mtext("(b)", side = 3, line = 0, at = 0, adj = 0.1)
+mtext("(b)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
 
 dev.off()
 
