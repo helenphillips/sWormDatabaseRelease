@@ -7,7 +7,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB179"){
-  setwd("C:/Users/hp39wasi/WORK/futureProjections_earthworms")
+  setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
 }
 
 
@@ -15,22 +15,19 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
 # 2. Create folder if it doesn't exist to save data into
 ########################################################
 
-if(!dir.exists("Data")){
-  dir.create("Data")
+if(!dir.exists("0_1_Data")){
+  dir.create("0_1_Data")
 }
 
 
-if(!dir.exists(file.path("Data","0_1_Data"))){
-  dir.create(file.path("Data", "0_1_Data"))
+
+
+if(!dir.exists(file.path("0_1_Data", Sys.Date()))){
+  dir.create(file.path("0_1_Data", Sys.Date()))
 }
 
 
-if(!dir.exists(file.path("Data","0_1_Data", Sys.Date()))){
-  dir.create(file.path("Data", "0_1_Data", Sys.Date()))
-}
-
-
-data_out <- file.path("Data", "0_1_Data", Sys.Date())
+data_out <- file.path("0_1_Data", Sys.Date())
 
 ########################################################
 # 3. Libraries
