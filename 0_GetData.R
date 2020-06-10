@@ -78,6 +78,8 @@ all_species <- list()
 # 7. Start processing data
 ########################################################
 
+## 
+tempDF <- data.frame(file = rep(NA, length(all_files)), nRow_sites =rep(NA, length(all_files)), nRow_after = rep(NA, length(all_files)))
 
 count <- 0
 
@@ -121,6 +123,11 @@ for(file in all_files){
   
   ## TODO: Check that dates make sense
   
+  ## 
+  
+  tempDF$file[count] <- file
+  tempDF$nRow_sites[count] <- nrow(sites)
+  
   
   #### Calculate site level species richness from species list & Check the values there
   if(nrow(species) > 0){
@@ -133,7 +140,7 @@ for(file in all_files){
     rm(juvs)
     rm(notSpecies)
     names(spR)[2] <- "NumberofSpecies"
-    sites <- merge(sites, spR, by.x = "Study_site", by.y = "Var1")
+    sites <- merge(sites, spR, by.x = "Study_site", by.y = "Var1") #, all.x = TRUE)
     rm(spR)
   
   ## Calculate site level abundance
@@ -142,7 +149,7 @@ for(file in all_files){
     ta$Individuals_fromspeciesUnits <- species$Abundance_Unit[1]
     ta$SS <- rownames(ta)
     ta$Individuals_fromspecies <- unname(ta$Individuals_fromspecies)
-    sites <- merge(sites, ta, by.x = "Study_site", by.y = "SS")
+    sites <- merge(sites, ta, by.x = "Study_site", by.y = "SS") #, all.x = TRUE)
     rm(ta)
   
   ## Calculate site level biomass
@@ -151,7 +158,7 @@ for(file in all_files){
     bm$Biomass_fromspeciesUnits <- species$WetBiomassUnits[1]
     bm$SS <- rownames(bm)
     bm$Biomass_fromspecies <- unname(bm$Biomass_fromspecies)
-    sites <- merge(sites, bm, by.x = "Study_site", by.y = "SS")
+    sites <- merge(sites, bm, by.x = "Study_site", by.y = "SS")#, all.x = TRUE)
     rm(bm)
     
   ## Check if site level species richness values were given
@@ -174,7 +181,7 @@ for(file in all_files){
     }
     rm(check)
     
-    
+    tempDF$nRow_after[count] <- nrow(sites)
   }else{
     sites$NumberofSpecies <- NA
     sites$Individuals_fromspecies <- NA
