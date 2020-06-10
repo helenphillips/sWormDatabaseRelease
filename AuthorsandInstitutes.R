@@ -1,5 +1,5 @@
 ## WORKING DIRECTORY --------------
-# setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
+setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
 
 ## VARIABLES -----------------------
 
@@ -356,7 +356,7 @@ for(c in 1:length(countries)) {
 }
 
 write.csv(Alist, file = "Authorship\\Authorlist_part1.csv", row.names = FALSE)
-Alist <- read.csv("Authorship\\Authorlist_part1.csv")
+# Alist <- read.csv("Authorship\\Authorlist_part1.csv")
 Blist <- Alist
 ## SECOND ADDRESS -------
 table(authors$Do.you.have.more.institutions.)
@@ -456,11 +456,12 @@ for(r in 1:nrow(second)){
         
 }
 
-Clist = Alist
+Clist <-  Alist
+write.csv(Alist, file = "Authorship\\Authorlist_part2.csv", row.names = FALSE)
 
 ## BRING IN SWORM AUTHORS ----------------------
 
-sworm <- read.csv("data/Phillips/sWormPeople.csv",encoding = "latin1")
+sworm <- read.csv("Authorship/sWormPeople.csv",encoding = "latin1")
 
 uniqueSworm <- unique(sworm$Institute)
 
@@ -495,6 +496,7 @@ for(s in 1:length(uniqueSworm)){
 }
 
 Dlist = Alist
+write.csv(Alist, file = "Authorship\\Authorlist_part3.csv", row.names = FALSE)
 
 justNames <- sworm[!(duplicated(sworm[,1])),]
 fAuthor <- justNames[1:(nrow(justNames)-2),1]
@@ -529,6 +531,9 @@ names(sworm) <- c("FullName","firstName", "lastName",  "Address")
 
 
 allAuthors <- rbind(sworm, Alist2)
+
+write.csv(allAuthors, file = "Authorship\\Authorlist_forManualEdit.csv", row.names = FALSE)
+
 ## 
 ## USING REMYS SCRIPT -------------------
 # THE FUNCTION NEED A DATAFRAME WITH THE FOLLOWING COLUMNS:
@@ -672,11 +677,12 @@ list.author.fun <- function(dataframe,first.author = character(), last.author = 
 # f = c("xQ","eB")
 # l =  c('aA','tD')
 
+allAuthors <- read.csv("Authorship\\Authorlist_ManualEdit.csv")
 
 df = allAuthors %>%
         apply(., 2, as.character) %>%
         as.data.frame()
 
-df <- df[-(grep("Robin", df$firstName)),]
 
-list.author.fun(dataframe = df,first.author = as.character(fAuthor),last.author = as.character(lAuthor) ,file.name = "authors_list.txt")
+list.author.fun(dataframe = df,first.author = as.character(fAuthor),last.author = as.character(lAuthor) ,file.name = "Authorship\\authors_list.txt")
+
