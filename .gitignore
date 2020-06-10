@@ -7,3 +7,8 @@ RevisedSpeciesNames/
 Figures/
 shapefiles/
 Authorship/
+0_1_Data/
+.Rhistory
+.httr-oauth
+test.log
+.httr-oauth-SUSPENDED
