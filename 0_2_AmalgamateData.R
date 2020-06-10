@@ -3,7 +3,7 @@
 ########################################################
 
 if(Sys.info()["nodename"] == "IDIVNB179"){
-  setwd("C:/Users/hp39wasi/WORK/futureProjections_earthworms")
+  setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
 }
 
 
@@ -11,26 +11,27 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
 # 2. Create folder if it doesn't exist to save data into
 ########################################################
 
-if(!dir.exists("Data")){
-  dir.create("Data")
+
+
+
+if(!dir.exists("0_2_Data")){
+  dir.create("0_2_Data")
 }
 
 
 
-if(!dir.exists(file.path("Data","0_2_Data"))){
-  dir.create(file.path("Data", "0_2_Data"))
-}
-data_out <- file.path("Data", "0_2_Data")
+
+data_out <- file.path("0_2_Data")
 
 
-data_in <- file.path("Data", "0_1_Data", "2020-06-03")
+data_in <- file.path("0_1_Data", "2020-06-10")
 
 ########################################################
 # 3. Libraries
 ########################################################
 
-source("Scripts/Functions/FormatData.R")
-source("Scripts/Functions/CalculateSitelevelMetrics.R")
+source("Functions/FormatData.R")
+source("Functions/CalculateSitelevelMetrics.R")
 
 library(xlsx)
 
@@ -103,6 +104,8 @@ count <- 0
 for(file in all_files){
   count <- count + 1
   
+  print(count)
+  
   StudyLines$file[count] <- file
   
   print(file)
@@ -157,14 +160,12 @@ for(file in all_files){
   
   if(nrow(sites) != length(sites$Study_site)){
     print(paste(file,": some sites are not unique"))
-    next
   }
   
   ## all study names in 'species' should be in 'sites'
   
   if( !(all(species$Study_ID %in% sites$Study_Name))){
     print(paste(file, ": some studys in 'species' are not in 'sites'"))
-    next
   }
   
   
@@ -172,13 +173,11 @@ for(file in all_files){
   
   if( !(all(species$Study_site %in% sites$Study_site))){
     print(paste(file, ": some sites in 'species' are not in 'sites'"))
-    next
   }
   
   ## only one site in a study
   if(any(table(sites$Study_Name) < 2)){
     print(paste(file, ": a study has less than 2 sites"))
-    next
   }
   
   
