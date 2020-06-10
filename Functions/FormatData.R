@@ -3,15 +3,26 @@
 
 formatSites <- function(sites){
   
-  names(sites) <- gsub("\\s+","_", names(sites))
-  names(sites) <- gsub("\\(","_", names(sites))
-  names(sites) <- gsub("\\)","", names(sites))
-  names(sites) <- gsub("\\?","", names(sites))
-  names(sites) <- gsub("\\%","percent", names(sites))
-  names(sites)[which(names(sites) == "C/N_ratio")] <- "C.N_ratio"
-  names(sites)[which(names(sites) == "WRB/FAO_SoilType")] <- "WRB_FAO_SoilType"
+  sites[grep("NA", names(sites))] <- NULL
   
-
+  
+  names(sites) <- c(
+    "file", "Study_Name", "Site_Name", "Observational", "Latitude__decimal_degrees" ,
+    "Longitude__Decimal_Degrees",
+    "Altitude__m", "Country", "Sample_StartDate_Month", "Sample_StartDate_Year", "Sample_EndDate_Month",
+    "Sample_EndDate_Year",
+    "ExtractionMethod", "Sampled_Area", "Sampled_Area_Unit", "Sample_Effort", "PH", "PH_Collection_Method",
+    "PH_mean", "CEC", "CEC_unit", "CEC_mean", "Base_Saturation_percent" , "BaseSaturation_mean",
+    "Organic_Carbon__percent",   "OC_mean", "Soil_Organic_Matter__percent" , "SOM_mean",   "C.N_ratio",
+    "CN_mean",   "Sand__percent","Silt__percent", "Clay__percent",   "sand_silt_clay_mean",
+    "USDA_SoilTexture",   "Soil_Moisture_percent", "WRB_FAO_SoilType",  "LandUse", "HabitatCover", "IPBES_Habitat_Units", "Management_System", "Tillage", "Pesticide", "Fertilizer",
+    "Selectively_harvested", "Clear_cut", "Fire", "Stocking_rate", "Grazing_all_year",
+    "Rotation", "Monoculture", "Planted", "Habitat_as_described", "SpeciesRichness",
+    "SpeciesRichnessUnit", "WetBiomass", "WetBiomassUnits", "Abundance", "Abundance_Units")
+  
+  
+  sites$file <- gsub(".xlsx", "", sites$file)
+  
   sites$Study_Name <- as.factor(sites$Study_Name)
   sites$Site_Name <- as.factor(sites$Site_Name)
   sites$Observational <- as.factor(sites$Observational)
@@ -42,19 +53,19 @@ formatSites <- function(sites){
   sites$WRB_FAO_SoilType <- as.factor(sites$WRB_FAO_SoilType)                                 
   sites$LandUse <- as.factor(sites$LandUse)                              
   sites$HabitatCover <- as.factor(sites$HabitatCover)
-  sites$IPBES_Habitat_Units <- as.factor(sites$IPBES_Habitat_Units)
-  sites$Management_System <- as.factor(sites$Management_System)
-  sites$Tillage <- as.integer(sites$Tillage)
-  sites$Pesticide<- as.integer(sites$Pesticide)
-  sites$Fertilizer <- as.integer(sites$Fertilizer)
-  sites$Selectively_harvested <- as.integer(sites$Selectively_harvested)
-  sites$Clear_cut <- as.integer(sites$Clear_cut)
-  sites$Fire <- as.integer(sites$Fire)
-  sites$Stocking_rate <- as.integer(sites$Stocking_rate)
-  sites$Grazing_all_year <- as.integer(sites$Grazing_all_year)
-  sites$Rotation <- as.integer(sites$Rotation)
-  sites$Monoculture <- as.integer(sites$Monoculture)
-  sites$Planted <- as.integer(sites$Planted)
+  sites$IPBES_Habitat_Units <- NULL
+  sites$Management_System <- NULL
+  sites$Tillage <- NULL
+  sites$Pesticide<- NULL
+  sites$Fertilizer <- NULL
+  sites$Selectively_harvested <- NULL
+  sites$Clear_cut <- NULL
+  sites$Fire <- NULL
+  sites$Stocking_rate <- NULL
+  sites$Grazing_all_year <- NULL
+  sites$Rotation <- NULL
+  sites$Monoculture <- NULL
+  sites$Planted <- NULL
   
   sites$SpeciesRichness <- as.numeric(sites$SpeciesRichness)                          
   sites$SpeciesRichnessUnit <- as.factor(sites$SpeciesRichnessUnit)
@@ -69,20 +80,24 @@ formatSites <- function(sites){
   
   names(sites)[which(names(sites) == "WetBiomass")] <- "Site_WetBiomass"
   names(sites)[which(names(sites) == "WetBiomassUnits")] <- "Site_WetBiomassUnits"
-
+  
   names(sites)[which(names(sites) == "Abundance")] <- "Site_Abundance"
   names(sites)[which(names(sites) == "Abundance_Units")] <- "Site_AbundanceUnits"
-
+  
   return(sites)
 }
 
 formatSpecies <- function(species){
   
+  species[grep("NA", names(species))] <- NULL
+  
+  
   names(species) <- gsub("\\s+","_", names(species))
   names(species) <- gsub("\\(","_", names(species))
   names(species) <- gsub("\\)","", names(species))
-  names(species)[which(names(species) == "Native/Non-native")] <- "Native.Nonnative"
-
+  names(species) <- gsub("\\.","_", names(species))
+  names(species)[which(names(species) == "Native_Non_native")] <- "Native.Nonnative"
+  
   species$Study_ID <- as.factor(species$Study_ID)
   species$Site_Name <- as.factor(species$Site_Name)
   species$SpeciesBinomial <- as.factor(species$SpeciesBinomial)
@@ -100,13 +115,13 @@ formatSpecies <- function(species){
   
   species$Study_site <- as.factor(paste(species$Study_ID, species$Site_Name))
   
+  species$file <- gsub(".xlsx", "", species$file)
+  
+  
   return(species)
 }
 
 SiteLevels <- function(sites){
-  
-  sites$Management_System <- factor(sites$Management_System, levels = c("None",  "Annual crop", "Perennial crops", "Integrated systems",                   
-                                                                        "Tree plantations", "Pastures (grazed lands)","Unknown"))
   
   sites$LandUse <- factor(sites$LandUse, levels = c("Primary vegetation", "Secondary vegetation", "Pasture" ,
                                                     "Production - Arable", "Production - Crop plantations", 
@@ -122,21 +137,17 @@ SiteLevels <- function(sites){
                                                               "Urban","Bare area (consolidated",
                                                               "Paddy field","Wetland", "Water bodies", "Unknown"))
   
-  sites$Management_System <- factor(sites$Management_System, levels = c( "None", "Pastures (grazed lands)", "Annual crop", 
-                                                     "Perennial crops", "Integrated systems", "Tree plantations", 
-                                                     "Unknown" ))
-  
   if("ESA" %in% names(sites))
-     {
-       sites$ESA <- as.factor(sites$ESA)
-       sites$ESA <- factor(sites$ESA, levels = c(
-         "Broadleaf deciduous forest", "Broadleaf evergreen forest", "Needleleaf deciduous forest",
-         "Needleleaf evergreen forest", "Mixed forest", "Tree open", "Herbaceous with spare tree/shrub",
-         "Shrub", "Herbaceous", "Sparse vegetation", "Production - Herbaceous", "Production - Plantation",
-         "Cropland/Other vegetation mosaic",  "Urban", "Bare area (consolidated",
-         "Bare area (unconsolidated", "Unknown", "Paddy field", "Wetland/Herbaceous", "Water bodies"))
-      }
-    
+  {
+    sites$ESA <- as.factor(sites$ESA)
+    sites$ESA <- factor(sites$ESA, levels = c(
+      "Broadleaf deciduous forest", "Broadleaf evergreen forest", "Needleleaf deciduous forest",
+      "Needleleaf evergreen forest", "Mixed forest", "Tree open", "Herbaceous with spare tree/shrub",
+      "Shrub", "Herbaceous", "Sparse vegetation", "Production - Herbaceous", "Production - Plantation",
+      "Cropland/Other vegetation mosaic",  "Urban", "Bare area (consolidated",
+      "Bare area (unconsolidated", "Unknown", "Paddy field", "Wetland/Herbaceous", "Water bodies"))
+  }
+  
   
   
   if("intensity" %in% names(sites)){sites$intensity <- as.factor(sites$intensity)}
@@ -147,7 +158,7 @@ SiteLevels <- function(sites){
 
 scaleVariables <- function(data){
   
-  print("Scaling the following variables: pH, Clay, Silt, CEC, OrganicC, bio1, bio4, bio7, bio12, bio15, aridity, PET and PETSD")
+  print("Scaling the following variables: elevation, pH, Clay, Silt, CEC, OrganicC, bio1, bio4, bio7, bio12, bio15, aridity, PET and PETSD")
   
   data$scalePH <- as.vector(scale(data$phFinal))
   data$scaleCLYPPT <- scale(data$ClayFinal)
@@ -164,6 +175,8 @@ scaleVariables <- function(data){
   data$scaleAridity <- scale(data$Aridity)
   data$ScalePET <- scale(data$PETyr)
   data$ScalePETSD <- scale(data$PET_SD)
+  
+  data$ScaleElevation <- scale(data$elevation)
   
   return(data)
   
