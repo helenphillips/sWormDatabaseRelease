@@ -53,19 +53,21 @@ formatSites <- function(sites){
   sites$WRB_FAO_SoilType <- as.factor(sites$WRB_FAO_SoilType)                                 
   sites$LandUse <- as.factor(sites$LandUse)                              
   sites$HabitatCover <- as.factor(sites$HabitatCover)
+  
+  sites$Management_System <- as.factor(sites$Management_System)
+  sites$Tillage <- as.integer(sites$Tillage)
+  sites$Pesticide<- as.integer(sites$Pesticide)
+  sites$Fertilizer <- as.integer(sites$Fertilizer)
+  sites$Selectively_harvested <- as.integer(sites$Selectively_harvested)
+  sites$Clear_cut <- as.integer(sites$Clear_cut)
+  sites$Fire <- as.integer(sites$Fire)
+  sites$Grazing_all_year <- as.integer(sites$Grazing_all_year)
+  sites$Rotation <- as.integer(sites$Rotation)
+  sites$Monoculture <- as.integer(sites$Monoculture)
+  sites$Planted <- as.integer(sites$Planted)
+  
   sites$IPBES_Habitat_Units <- NULL
-  sites$Management_System <- NULL
-  sites$Tillage <- NULL
-  sites$Pesticide<- NULL
-  sites$Fertilizer <- NULL
-  sites$Selectively_harvested <- NULL
-  sites$Clear_cut <- NULL
-  sites$Fire <- NULL
   sites$Stocking_rate <- NULL
-  sites$Grazing_all_year <- NULL
-  sites$Rotation <- NULL
-  sites$Monoculture <- NULL
-  sites$Planted <- NULL
   
   sites$SpeciesRichness <- as.numeric(sites$SpeciesRichness)                          
   sites$SpeciesRichnessUnit <- as.factor(sites$SpeciesRichnessUnit)
