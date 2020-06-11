@@ -6,16 +6,12 @@
 
 ## GENERAL VARS ---------------------------
 
-if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
-}
-
 if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
 }
 
 
-data_in <-"0_Data"
+data_in <-"0_2_Data"
 
 if(!dir.exists("2_Data")){
   dir.create("2_Data")
