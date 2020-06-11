@@ -1,12 +1,6 @@
 # This script makes a list of all species names in the dataset. 
 # This list was given to the earthworm experts in sWorm to correct the
-# names and functional groups. A later script (XX) builds on this.
-# 
-# A later section of the script uses any previous version of what was created,
-# so create an updated version.
-# 
-# This script is messy. I would do things differently now.
-# Sorry
+# names and functional groups. 
 
 
 
@@ -14,10 +8,6 @@
 ########################################################
 # 1. Set Working Directory
 ########################################################
-
-if(Sys.info()["nodename"] == "IDIVNB193"){
-  setwd("C:\\restore2\\hp39wasi\\sWormDatabaseRelease")
-}
 
 
 if(Sys.info()["nodename"] == "IDIVNB179"){
@@ -39,14 +29,12 @@ data_out <- "1_Data"
 
 source(file.path("Functions", "FormatData.R"))
 library(dplyr)
-library(googlesheets)
-x <- gs_ls() ## Authentication
 
 #################################################
 # 4. Loading in variables
 #################################################
 
-data_in <-"0_Data"
+data_in <-"0_2_Data"
 files <- list.files(file.path(data_in))
 file_dates <- sapply(strsplit(files, "_"), "[", 2) ## Split the string by date, which produces a list, then take second element of each list i.e. the date
 file_dates <- sapply(strsplit(file_dates, "\\."), "[", 1) ## Split the string by date, which produces a list, then take first element of each list i.e. the date
@@ -68,36 +56,37 @@ bib <- read.csv(file.path(data_in, loadinbib))
 # 6. Quick investigation
 #################################################
 
-length(unique(dat$SpeciesBinomial)) ##   313
+length(unique(dat$SpeciesBinomial)) ##   316
 
 table(dat$Functional_Type) ## Unknowns are also blank
 
 ## Check that all are binomials
 which(
   (sapply(gregexpr("\\W+", dat$SpeciesBinomial), length) + 1) 
-  < 2) ## This counts the number of words in teh string
+  < 2) ## This counts the number of words in the string
 #################################################
 # 6. Merge bib info
 #################################################
 
 bib <- bib[,which(names(bib) == "file" | names(bib) == "DataProvider_Surname")]
+bib$file <- gsub(".xlsx", "", bib$file)
 
-dat <- merge(dat, bib, by.x = "file.x", by.y = "file")
+
+dat <- merge(dat, bib, by.x = "file", by.y = "file")
 
 #################################################
 # 7. Create dataframe for new morphospecies
 #################################################
 
 result <- dat %>%
+  filter(!is.na(SpeciesBinomial)) %>% # to remove NA categories that we are grouping by
    group_by(SpeciesBinomial) %>%
    summarise(fg = toString(unique(Functional_Type)), 
              Country = toString(unique(Country)), 
-             file = toString(unique(file.x)),
+             file = toString(unique(file)),
              provider = toString(unique(DataProvider_Surname)))
 
-spp <- as.data.frame(result)
-## Remove line that isn't a species
-spp <- spp[-which(is.na(spp$SpeciesBinomial)),] # 303
+spp <- as.data.frame(result) # 315
 
 # Drilobase sometimes contains multiple functional groups for each earthworm species
 # Previous function merged them all together
