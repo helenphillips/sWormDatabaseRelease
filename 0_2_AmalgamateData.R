@@ -432,6 +432,11 @@ if(length(unique(sites$file)) != length(unique(all_files))){stop ("Files are mis
 sites$ID <- 1:nrow(sites)
 sites$ID <- paste(sites$file, sites$Study_Name, sites$ID, sep = "_")
 
+
+
+bib$file <- gsub(".xlsx", "", bib$file)
+
+
 write.csv(sites, file = file.path(data_out, paste("sites_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
 write.csv(species, file = file.path(data_out, paste("species_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
 write.csv(bib, file = file.path(data_out, paste("Metadata_", Sys.Date(), ".csv", sep = "")), row.names = FALSE)
