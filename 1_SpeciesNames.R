@@ -69,7 +69,6 @@ which(
 #################################################
 
 bib <- bib[,which(names(bib) == "file" | names(bib) == "DataProvider_Surname")]
-bib$file <- gsub(".xlsx", "", bib$file)
 
 
 dat <- merge(dat, bib, by.x = "file", by.y = "file")
