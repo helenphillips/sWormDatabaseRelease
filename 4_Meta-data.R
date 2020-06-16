@@ -33,26 +33,20 @@ loadinBib <- loadMostRecent_2("MetaData_sWorm", data_in)
 bib <- read.csv(file.path(data_in, loadinBib))
 ## SITES ----------------------------------
 
-nrow(sites) # 8148 sites
-length(unique(sites$Study_Name)) # 277 studies
-length(unique(sites$file))
+nrow(sites) # 10840 sites
+length(unique(sites$Study_Name)) # 276 studies
+length(unique(sites$file)) # 199
 
 unique(sites$Country)
 
-levels(sites$Country)[which(levels(sites$Country) == "MEXICO")] <- "Mexico"
-levels(sites$Country)[which(levels(sites$Country) == "Pueto Rico")] <- "Puerto Rico"
-levels(sites$Country)[which(levels(sites$Country) == "UK")] <- "United Kingdom"
-levels(sites$Country)[which(levels(sites$Country) == "Wales")] <- "United Kingdom"
-levels(sites$Country)[which(levels(sites$Country) == "USA")] <- "United States"
-
 sites <- droplevels(sites)
 
-length(unique(sites$Country)) - 1 ## Minus one for "border"
+length(unique(sites$Country)) - 2 ## Minus one for "border" and there's an NA
+# 60
 
 
-
-min(sites$Sample_StartDate_Year, na.rm = TRUE)
-max(sites$Sample_StartDate_Year, na.rm = TRUE)
+min(sites$Sample_StartDate_Year, na.rm = TRUE) # 1973
+max(sites$Sample_StartDate_Year, na.rm = TRUE) # 2017
 
 ## Number with environmental information
 
@@ -66,10 +60,11 @@ soilProps <- c("PH","CEC","Base_Saturation_percent","Organic_Carbon__percent",
 temp <- temp[rowSums(is.na(temp[, names(temp) %in% soilProps])) != length(soilProps), ]
 
 nrow(temp) / nrow(sites)
+# 0.5
 
 ## SPECIES --------------------------------
 length(unique(spp$SpeciesBinomial))
-
+# 184
 
 
 
@@ -83,4 +78,4 @@ t <- rbind(one, two, three)
 
 length(unique(t$file)) # 17
 
-length(unique(sites$file)) - length(unique(t$file)) # 186
+length(unique(sites$file)) - length(unique(t$file)) # 182

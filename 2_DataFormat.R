@@ -61,7 +61,7 @@ sites <- read.csv(file.path(data_in, loadinsites))
 ## REMOVE SITE COLUMNS ------------------------------------
 names(sites)
 
-colsToRemove <- c("IPBES_Habitat_Units", "Stocking_rate", "Study_site", "ID")
+colsToRemove <- c("Study_site", "ID")
 
 sites <- sites[,-(which(names(sites) %in% colsToRemove))]
 
@@ -98,8 +98,11 @@ sites$HabitatCover[which(is.na(sites$HabitatCover))] <- "Unknown"
 
 ## FIXING COUNTRY NAMES -----------------------------------
 
-
-
+levels(sites$Country)[which(levels(sites$Country) == "MEXICO")] <- "Mexico"
+  levels(sites$Country)[which(levels(sites$Country) == "Pueto Rico")] <- "Puerto Rico"
+  levels(sites$Country)[which(levels(sites$Country) == "UK")] <- "United Kingdom"
+  levels(sites$Country)[which(levels(sites$Country) == "Wales")] <- "United Kingdom"
+  levels(sites$Country)[which(levels(sites$Country) == "USA")] <- "United States"
 ## CHANGE THE ORDER OF SITE COLUMNS --------------------------
 
 ## Actually, they are in the correct order
@@ -122,6 +125,7 @@ spp$Study_site <- NULL
 
 ## This is a file I made manually, by combining data from George and Maria (also in this folder)
 loadinfg <- "UniqueSpeciestoSend_2019-06-19_Final.csv"
+
 # Drilobase was also used to check for synonyms and add in functional groups where possible
 
 ## Some species identifications are in press - look at George's final file to identify. 

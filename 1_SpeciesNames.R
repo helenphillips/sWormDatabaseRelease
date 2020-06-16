@@ -56,7 +56,7 @@ bib <- read.csv(file.path(data_in, loadinbib))
 # 6. Quick investigation
 #################################################
 
-length(unique(dat$SpeciesBinomial)) ##   316
+length(unique(dat$SpeciesBinomial)) ##   310
 
 table(dat$Functional_Type) ## Unknowns are also blank
 
@@ -120,3 +120,4 @@ spp <- spp[-grep("Megadrile", spp$SpeciesBinomial, ignore.case = TRUE)]
 ###############################################
 
 write.csv(spp, file.path(data_out, paste("UniqueSpecies_", Sys.Date(), ".csv", sep ="")), row.names = FALSE)
+

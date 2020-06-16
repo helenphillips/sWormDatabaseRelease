@@ -39,19 +39,22 @@ sites <- read.csv(file.path(data_in, sites))
 ########################################################
 
 sitecoords <- sites[!(is.na(sites$Latitude__decimal_degrees)),]
-coord<-aggregate(cbind(sitecoords$Longitude__Decimal_Degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
+coord<-aggregate(cbind(sitecoords$Longitude__decimal_degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
 
 
-# coord$X<-coord$Group.1
 # coord<-coord[2:4]
-coord$Group.1 <- NULL
-names(coord)<-c("Long", "Lat", "X", "nSites")
+ 
+all(coord$Group.1 == names(table(sites$Study_Name)))
+coord <- cbind(coord, table(sites$Study_Name))
+ 
+coord$Var1 <- NULL
+names(coord)<-c("X", "Long", "Lat",  "nSites")
 
 
 coord$size <- ((coord$nSites-min(coord$nSites))/(max(coord$nSites)-min(coord$nSites)) * 2) + 0.5
 
 
-dsSPDF<-SpatialPointsDataFrame(coord[,1:2], data.frame(coord[,1:5]))
+dsSPDF<-SpatialPointsDataFrame(coord[,2:3], data.frame(coord[,1:5]))
 proj4string(dsSPDF)<-CRS("+proj=longlat")
 
 transpBlack <- rgb(0, 0, 0, alpha = 0.4, names = NULL, maxColorValue = 1)
@@ -62,7 +65,7 @@ map("world",border="gray87",fill=TRUE, col="gray87",mar=rep(0,4))
 points(dsSPDF, col=transpBlack, bg = transpBlack, cex= coord$size, pch=19)
 
 
-sizes <- c(1, 50, 100, 150, 200, 250)
+sizes <- c(1, 100, 200, 300, 400, 500)
 cexsizes <- ((sizes-min(coord$nSites))/(max(coord$nSites)-min(coord$nSites)) * 2) + 0.5
 
 legend(x = -170, y = 2, legend = sizes, pch = 19, pt.cex =cexsizes, bty="n", cex = 0.7, 
@@ -77,7 +80,6 @@ dev.off()
 # 5. Bar chart of all methods
 ########################################################
 labs <- names(table(sites$ExtractionMethod))
-labs <- gsub("Formaldehyde", "Formalin", labs)
 
 labs <- c("Hand sorting",                         
 "Hand sorting + \n Chemical extraction (Formalin)",
