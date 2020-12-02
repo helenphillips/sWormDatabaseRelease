@@ -6,6 +6,9 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
 }
 
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
 
 ########################################################
 # 2. Create folder if it doesn't exist to save data into
@@ -24,7 +27,7 @@ if(!dir.exists("0_2_Data")){
 data_out <- file.path("0_2_Data")
 
 
-data_in <- file.path("0_1_Data", "2020-06-16")
+data_in <- file.path("0_1_Data", "2020-12-01")
 
 ########################################################
 # 3. Libraries
@@ -78,7 +81,7 @@ all_files <- filelist[grep("^\\d*\\_", filelist, perl = TRUE)]
 
 cat(paste("\nFound", length(all_files), "datasheets"))
 
-options( warn = 2 )
+options( warn = 1 )
 
 #all_bib <- list(length = length(bib_names))
 #names(all_bib) <- bib_names

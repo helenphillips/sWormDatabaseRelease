@@ -10,6 +10,11 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
 }
 
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
+
+
 
 data_in <-"0_2_Data"
 
@@ -35,7 +40,7 @@ bib <- read.csv(file.path(data_in, loadinbib))
 
 names(bib)
 
-colsToRemove <- c("DataProvider_Title","DataProvider_Surname",
+colsToRemove <- c("PaperContact_Email", "DataProvider_Title","DataProvider_Surname",
                  "DataProvider_FirstName","DataProvider_MiddleInitials" ,
                  "DataProvider_Email","DataProvider_Institute",
                  "DataProvider_Department","Additional_Authors","Notes","BibKey")
@@ -67,7 +72,9 @@ sites <- sites[,-(which(names(sites) %in% colsToRemove))]
 
 ## RENAME SOME SITE COLUMNS ------------------------------
 
-names(sites)[names(sites) == "Longitude__Decimal_Degrees"] <- "Longitude__decimal_degrees"
+names(sites)[names(sites) == "Longitude__Decimal_Degrees"] <- "Longitude_decimal_degrees"
+names(sites)[names(sites) == "Latitude__decimal_degrees"] <- "Latitude_decimal_degrees"
+
 
 sites$ExtractionMethod <- as.character(sites$ExtractionMethod)
 sites$ExtractionMethod[which(sites$ExtractionMethod == "Hand sorting + Liquid Extraction (e.g. Formaldehyde)")] <- 
@@ -117,6 +124,13 @@ write.csv(sites, file = file.path(data_out, paste0("SitesData_sWorm_", Sys.Date(
 loadinspp <- loadMostRecent("species_", data_in)
 spp <- read.csv(file.path(data_in, loadinspp))
 
+
+### CLEAN THE DATA -----------------------
+
+spp$SpeciesBinomial  <- trimws(spp$SpeciesBinomial, which = c("both"))
+
+
+
 ## REMOVE COLUMNS -----------------------------------------
 
 spp$Study_site <- NULL
@@ -163,18 +177,226 @@ names(spp)[names(spp) == "Revised"] <- "Revised_Binomial"
 
 ## REMOVE AND RENAME COLUMNS ------------------------------
 
-spp$SpeciesBinomial <- NULL
+# spp$SpeciesBinomial <- NULL
 spp$Functional_Type <- NULL
 
-spp <- spp[,c("file","Study_ID","Site_Name",
+spp <- spp[,c("file","Study_ID","Site_Name", "SpeciesBinomial",
               "Revised_Binomial", "MorphospeciesID","Genus","Family",
               "Revised_fg","LifeStage","Native.Nonnative","Abundance",
               "Abundance_Unit","WetBiomass","WetBiomassUnits")]
-              
+
+names(spp)[which(names(spp) == "SpeciesBinomial")] <- "OriginalSpeciesBinomial"
+
 names(spp)[which(names(spp) == "Revised_Binomial")] <- "SpeciesBinomial"
 names(spp)[which(names(spp) == "Revised_fg")] <- "Ecological_group"
 
+## GENUS NAMES -------------------------
+# Some binomials are actually subspecies
+# which makes this harder...
+# So I am doing it the easy way
+
+allGenus <- c()
+for(i in 1:nrow(spp)){
+  allGenus[i] <- strsplit(spp$SpeciesBinomial[i], "\\s+")[[1]][1]
+}
+
+allGenus <- ifelse(is.na(allGenus), spp$Genus, allGenus)
+
+allGenus<- trimws(allGenus, which = c("both"))
+
+
+unique(allGenus)[order(unique(allGenus))]
+
+allGenus[which(allGenus == "Euty")] <- "Eutyphoeus"
+allGenus[which(allGenus == "genYuc")] <- ""
+allGenus[which(allGenus == "Lombricus")] <- "Lumbricus"
+
+allGenus[which(allGenus == "Amynthus")] <- "Amynthas"
+
+allGenus[which(allGenus == "Firzingeria")] <- "Fitzingeria"
+
+allGenus[which(allGenus == "Urubenus")] <- "Urobenus"
+
+
+
+
+spp$Family[which(allGenus == "Lumbricidae")] <- "Lumbricidae"
+allGenus[which(allGenus == "Lumbricidae")] <- ""
+
+allGenus[which(allGenus == "Megascolecida")] <- "Megascolecidae"
+spp$Family[which(allGenus == "Megascolecidae")] <- "Megascolecidae"
+allGenus[which(allGenus == "Megascolecidae")] <- ""
+
+spp$Family[which(allGenus == "Acanthodrilidae")] <- "Acanthodrilidae"
+allGenus[which(allGenus == "Acanthodrilidae")] <- ""
+
+spp$Family[which(allGenus == "Glossoscolecidae")] <- "Glossoscolecidae"
+allGenus[which(allGenus == "Glossoscolecidae")] <- ""
+
+allGenus[which(allGenus == "Ocnerod")] <- "Ocnerodrilidae" # this matches their other data
+spp$Family[which(allGenus == "Ocnerodrilidae")] <- "Ocnerodrilidae"
+allGenus[which(allGenus == "Ocnerodrilidae")] <- ""
+
+spp$Family[which(allGenus == "Eudrilidae")] <- "Eudrilidae"
+allGenus[which(allGenus == "Eudrilidae")] <- ""
+
+
+allGenus[which(allGenus == "Aporectodea")] <- "Aporrectodea"
+allGenus[which(allGenus == "Apporectodea")] <- "Aporrectodea"
+
+
+spp$Genus2 <- allGenus
+
+## FAMILY NAMES -----------------------------
+
+spp$Family2 <- spp$Family
+
+spp$Family2[spp$Genus2 %in% c(
+"Agastrodrilus"  ,
+  "Balanteodrilus",
+"Dichogaster",
+"Diplocardia",
+"Diplotrema",
+"Eutyphoeus",
+"Larsonidrilus",
+"Lavellodrilus",
+"Lennogaster",
+"Mayadrilus",
+"Microscolex",
+"Millsonia",
+"Neotrigaster",
+"Octochaetona",
+"Reginaldia"
+)] <- "Acanthodrilidae"
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Allobophoridella",
+"Allolobophora",
+"Allolobophoridella",
+"Aporrectodea",
+"Bimastos",
+"Dendrobaena",
+"Dendrodrilus",
+"Eisenia",
+"Eiseniella",
+"Eiseniona",
+"Fitzingeria",
+"Helodrilus",
+"Iberoscolex",
+"Kritodrilus",
+"Lumbricus",
+"Murchieona",
+"Octolasion",
+"Octodriloides",
+"Octodrilus",
+"Perelia",
+"Proctodrilus",
+"Prosellodrilus",
+"Rhiphaeodrilus",
+"Satchellius",
+"Scherotheca",
+"Zophoscolex"
+)] <- "Lumbricidae"
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Amynthas",
+"Anisochaeta",
+"Gemascolex",
+"Heteroporodrilus",
+"Lampito",
+"Metaphire",
+"Perionyx",
+"Pithemera",
+"Polypheretima",
+"Spenceriella"
+)] <- "Megascolecidae"
+
+spp$Family2[spp$Genus2 %in% c(
+  "Fimoscolex",
+  "Glossodrilus",
+  "Glossoscolex",
+  "Holoscolex",
+  "Righiodrilus"
+
+)] <- "Glossoscolecidae" 
+
+spp$Family2[spp$Genus2 %in% c(
+  "Arraia",
+  "Belladrilus",
+  "Brasilisia",
+  "Dorgiodrilus",
+  "Eukerria",
+  "Gordiodrilus",
+  "Ilyogenia",
+  "Nematogenia",
+  "Ocnerodrilus",
+  "Phoenicodrilus"
+  
+)] <- "Ocnerodrilidae"  
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Criodrilus"
+
+)] <- "Criodrilidae"
+
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Drawida"
+  
+)] <- "Moniligastridae"
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Eminoscolex",
+  "Ephyriodrilus",
+  "Eudrilus",
+  "Hyperiodrilus",
+  "Lavellea",
+  "Legonodrilus",
+  "Malodrilus",
+  "Polytoreutus",
+  "Rosadrilus",
+  "Stuhlmannia"
+  
+)] <- "Eudrilidae"
+
+spp$Family2[spp$Genus2 %in% c(
+  "Hormogaster"
+  
+)] <- "Hormogastridae"
+
+
+
+spp$Family2[spp$Genus2 %in% c(
+  "Andiorrhinus",
+  "Martiodrilus",
+  "Onychochaeta",
+  "Periscolex",
+  "Pontoscolex",
+  "Rhinodrilus",
+  "Urobenus"
+  
+)] <- "Rhinodrilidae"
+## 
+
+
+spp$Genus <- spp$Genus2
+spp$Genus2 <- NULL
+
+spp$Family <- spp$Family2
+spp$Family2 <- NULL
+
+
+spp <- spp[,c("file","Study_ID","Site_Name", "OriginalSpeciesBinomial",
+              "SpeciesBinomial", "MorphospeciesID","Genus","Family",
+              "Ecological_group","LifeStage","Native.Nonnative","Abundance",
+              "Abundance_Unit","WetBiomass","WetBiomassUnits")]
+
 ## SAVE SPECIES FILE --------------------------------------
 
-write.csv(spp, file = file.path(data_out, paste0("SppData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
+write.csv(spp, file = file.path(data_out, paste0("SppOccData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
 

@@ -11,7 +11,7 @@ library(dplyr)
 
 ## LOAD LIST ---------------
 
-authors <- read.csv("Authorship/Co-Authors on the data paper (Responses) - Form Responses 1.csv", encoding = "UTF-8")
+authors <- read.csv("Authorship/Co-Authors on the data paper (Responses) - Form Responses 1_2020June.csv", encoding = "UTF-8")
 
 ## CHECKING ----------------
 
@@ -136,6 +136,8 @@ levels(authors$Country)[levels(authors$Country) == "US"] <- "USA"
 levels(authors$Country)[levels(authors$Country) == "U.S.A."] <- "USA"
 levels(authors$Country)[levels(authors$Country) == "Uunited States"] <- "USA"
 levels(authors$Country)[levels(authors$Country) == "United States of America"] <- "USA"
+levels(authors$Country)[levels(authors$Country) == "Russian Federation"] <- "Russia"
+
 authors$Country <- as.character(authors$Country)
 authors$Country[authors$Country == "the Netherlands"] <- "The Netherlands" 
 authors$Country[authors$Country == "Netherlands"] <- "The Netherlands" 
@@ -176,6 +178,7 @@ authors$City[authors$City == "Toronto, Ontario"] <- "Toronto"
 authors$City[authors$City == "Montpellier Cedex 2"] <- "Montpellier"
 authors$City[authors$City == "Montpellier cedex 2"] <- "Montpellier"
 authors$City[authors$City == "Poitiers Cedex 9"] <- "Poitiers"
+authors$City[authors$City == "Alcalá de Henares (Madrid)"] <- "Alcalá de Henares"
 
 authors$City[authors$City == "Dublin 4"] <- "Dublin"
 

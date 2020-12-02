@@ -10,6 +10,10 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:/Users/hp39wasi/WORK/sWormDatabaseRelease")
 }
 
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
+
 
 ########################################################
 # 2. Create folder if it doesn't exist to save data into

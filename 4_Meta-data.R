@@ -60,7 +60,7 @@ soilProps <- c("PH","CEC","Base_Saturation_percent","Organic_Carbon__percent",
 temp <- temp[rowSums(is.na(temp[, names(temp) %in% soilProps])) != length(soilProps), ]
 
 nrow(temp) / nrow(sites)
-# 0.5
+# 0.589
 
 ## SPECIES --------------------------------
 length(unique(spp$SpeciesBinomial))

@@ -81,11 +81,12 @@ dev.off()
 ########################################################
 labs <- names(table(sites$ExtractionMethod))
 
-labs <- c("Hand sorting",                         
+labs <- c(
+  "Chemical extraction \n (Formalin)",      
+  "Chemical extraction \n (Mustard)",
+  "Hand sorting",                         
 "Hand sorting + \n Chemical extraction (Formalin)",
 "Hand sorting + \n Chemical extraction (Mustard)",
-"Chemical extraction \n (Formalin)",      
-"Chemical extraction \n (Mustard)",
 "Octet method \n (electric shock)",              
 "Other",                          
 "Other Multiple",                       
@@ -113,8 +114,8 @@ sites$LandUse <- factor(sites$LandUse, levels = c("Primary vegetation", "Seconda
 
 LULabs <- c("Primary vegetation", "Secondary vegetation", 
             "Pasture",
-            "Production \n(Arable)","Production \n(Crop plantations)",
-            "Production \n(Wood plantation)",
+            "Production System\n(Arable)","Production System\n(Crop plantations)",
+            "Production System\n(Wood plantation)",
             "Urban", "Unknown")
 
 par(mar = c(9, 4, 1, 4))
@@ -138,12 +139,12 @@ plot(b,nStudies[,2],xaxs = "i", xlim=c(0,10),pch = 19,col="red",axes=FALSE,ylim=
 axis(4,at=seq(0,100,10), las = 2)
 mtext("Number of studies (red dots)", line =  2.5, side = 4)
 
-
+levels(sites$HabitatCover)[which(levels(sites$HabitatCover) == "Wetland")] <- "Wetland/Herbaceous"
 
 sites$HabitatCover <- factor(sites$HabitatCover, levels = c(
   "Broadleaf deciduous forest", "Broadleaf evergreen forest", "Needleleaf deciduous forest",
   "Needleleaf evergreen forest", "Mixed forest", "Tree open", "Herbaceous with spare tree/shrub",
-  "Shrub", "Herbaceous", "Sparse vegetation", "Production - Herbaceous", "Production - Plantation",
+  "Shrub", "Herbaceous", "Sparse vegetation", 
   "Cropland/Other vegetation mosaic",  "Urban", "Bare area (consolidated",
   "Bare area (unconsolidated", "Paddy field", "Wetland/Herbaceous", "Water bodies", "Unknown"))
 
@@ -177,7 +178,7 @@ nStudies <- as.data.frame(nStudies)
 nStudies <- nStudies[!(is.na(nStudies$HabitatCover)), ] 
 
 par(new=TRUE)
-plot(b,nStudies[,2],xaxs = "i",pch = 19,col="red",axes=FALSE,ylim=c(0,100),ann=FALSE, xlim=c(0, 22))
+plot(b,nStudies[,2],xaxs = "i",pch = 19,col="red",axes=FALSE,ylim=c(0,125),ann=FALSE, xlim=c(0, 22))
 axis(4,at=seq(0,100,10), las = 2)
 mtext("Number of studies (red dots)", line =  2.5, side = 4)
 
