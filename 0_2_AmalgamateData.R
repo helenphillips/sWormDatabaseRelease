@@ -27,7 +27,7 @@ if(!dir.exists("0_2_Data")){
 data_out <- file.path("0_2_Data")
 
 
-data_in <- file.path("0_1_Data", "2020-12-01")
+data_in <- file.path("0_1_Data", "2020-12-03")
 
 ########################################################
 # 3. Libraries
