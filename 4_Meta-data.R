@@ -7,6 +7,12 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
 }
 
+
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
+
+
 ## FUNCTIONS AND PACKAGES --------------
 
 source("Functions/loadMostRecent.R")
@@ -26,7 +32,7 @@ data_out <- "4_Data"
 loadinSite <- loadMostRecent_2("SiteData_sWorm", data_in)
 sites <- read.csv(file.path(data_in, loadinSite))
 
-loadinSpecies <- loadMostRecent_2("SppData_sWorm", data_in)
+loadinSpecies <- loadMostRecent_2("SppOccData_sWorm", data_in)
 spp <- read.csv(file.path(data_in, loadinSpecies))
 
 loadinBib <- loadMostRecent_2("MetaData_sWorm", data_in)
@@ -41,7 +47,7 @@ unique(sites$Country)
 
 sites <- droplevels(sites)
 
-length(unique(sites$Country)) - 2 ## Minus one for "border" and there's an NA
+length(unique(sites$Country)) - 1 ## Minus one for "border"
 # 60
 
 

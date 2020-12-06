@@ -15,6 +15,11 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
 }
 
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
+
+
 
 ## VARS AND LIBRARIES --------------------------------
 if(!dir.exists("3_Data")){
@@ -38,7 +43,7 @@ loadinsites <- loadMostRecent_2("SitesData_sWorm", data_in)
 sites <- read.csv(file.path(data_in, loadinsites))
 
 
-loadinspp <- loadMostRecent_2("SppData_sWorm", data_in)
+loadinspp <- loadMostRecent_2("SppOccData_sWorm", data_in)
 spp <- read.csv(file.path(data_in, loadinspp))
 
 
@@ -57,4 +62,4 @@ spp <- spp[-which(spp$file == embargoedFiles),]
 
 write.csv(bib, file = file.path(data_out, paste0("MetaData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
 write.csv(sites, file = file.path(data_out, paste0("SiteData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
-write.csv(spp, file = file.path(data_out, paste0("SppData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)
+write.csv(spp, file = file.path(data_out, paste0("SppOccData_sWorm_", Sys.Date(), ".csv")), row.names = FALSE)

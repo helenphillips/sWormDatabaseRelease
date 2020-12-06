@@ -105,11 +105,11 @@ sites$HabitatCover[which(is.na(sites$HabitatCover))] <- "Unknown"
 
 ## FIXING COUNTRY NAMES -----------------------------------
 
-levels(sites$Country)[which(levels(sites$Country) == "MEXICO")] <- "Mexico"
-  levels(sites$Country)[which(levels(sites$Country) == "Pueto Rico")] <- "Puerto Rico"
-  levels(sites$Country)[which(levels(sites$Country) == "UK")] <- "United Kingdom"
-  levels(sites$Country)[which(levels(sites$Country) == "Wales")] <- "United Kingdom"
-  levels(sites$Country)[which(levels(sites$Country) == "USA")] <- "United States"
+sites$Country[which(sites$Country == "MEXICO")] <- "Mexico"
+sites$Country[which(sites$Country == "Pueto Rico")] <- "Puerto Rico"
+sites$Country[which(sites$Country == "UK")] <- "United Kingdom"
+sites$Country[which(sites$Country == "Wales")] <- "United Kingdom"
+sites$Country[which(sites$Country == "USA")] <- "United States"
 ## CHANGE THE ORDER OF SITE COLUMNS --------------------------
 
 ## Actually, they are in the correct order
@@ -149,17 +149,17 @@ keep <- c("SpeciesBinomial","Revised", "Revised_fg")
 
 fg <- fg[,names(fg) %in% keep]
 
-levels(fg$Revised_fg)
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "anecic"] <- "Anecic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "endogeic"] <- "Endogeic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "endogeic?"] <- "Endogeic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "Epi-endogeic"] <- "Epi-Endogeic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "epigeic"] <- "Epigeic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "N/A"] <- "Unknown"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "endogeic or epiendogeic"] <- "Epi-Endogeic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "Endo-anecic"] <- "Anecic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "Endogeic, Anecic"] <- "Anecic"
-levels(fg$Revised_fg)[levels(fg$Revised_fg) == "epi-anecic"] <- "Anecic"
+unique(fg$Revised_fg)
+fg$Revised_fg[which(fg$Revised_fg == "anecic")] <- "Anecic"
+fg$Revised_fg[which(fg$Revised_fg == "endogeic")] <- "Endogeic"
+fg$Revised_fg[which(fg$Revised_fg == "endogeic?")] <- "Endogeic"
+fg$Revised_fg[which(fg$Revised_fg == "Epi-endogeic")] <- "Epi-Endogeic"
+fg$Revised_fg[which(fg$Revised_fg == "epigeic")] <- "Epigeic"
+fg$Revised_fg[which(fg$Revised_fg == "N/A")] <- "Unknown"
+fg$Revised_fg[which(fg$Revised_fg == "endogeic or epiendogeic")] <- "Epi-Endogeic"
+fg$Revised_fg[which(fg$Revised_fg == "Endo-anecic")] <- "Anecic"
+fg$Revised_fg[which(fg$Revised_fg == "Endogeic, Anecic")] <- "Anecic"
+fg$Revised_fg[which(fg$Revised_fg == "epi-anecic")] <- "Anecic"
 
 spp <- merge(spp, fg, by.x = "SpeciesBinomial", by.y = "SpeciesBinomial", all.x = TRUE)
 
