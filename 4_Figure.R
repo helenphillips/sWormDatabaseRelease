@@ -12,6 +12,12 @@ if(Sys.info()["nodename"] == "IDIVNB179"){
   setwd("C:\\Users\\hp39wasi\\WORK\\sWormDatabaseRelease\\")
 }
 
+if(Sys.info()["nodename"] == "LAPTOP-I0JSR1DL"){
+  setwd("~/WORK/sWormDatabaseRelease")
+}
+
+
+
 
 ## PACKAGES AND VARS ---------------------------------------
 
@@ -38,8 +44,8 @@ sites <- read.csv(file.path(data_in, sites))
 # 4. Create map of all studies
 ########################################################
 
-sitecoords <- sites[!(is.na(sites$Latitude__decimal_degrees)),]
-coord<-aggregate(cbind(sitecoords$Longitude__decimal_degrees, sitecoords$Latitude__decimal_degrees), list(sitecoords$Study_Name), mean)
+sitecoords <- sites[!(is.na(sites$Latitude_decimal_degrees)),]
+coord<-aggregate(cbind(sitecoords$Longitude_decimal_degrees, sitecoords$Latitude_decimal_degrees), list(sitecoords$Study_Name), mean)
 
 
 # coord<-coord[2:4]
@@ -59,13 +65,19 @@ proj4string(dsSPDF)<-CRS("+proj=longlat")
 
 transpBlack <- rgb(0, 0, 0, alpha = 0.4, names = NULL, maxColorValue = 1)
 
-jpeg(filename = file.path(figures, "Map_allData.jpg"), quality = 100, res = 300, width = 2000, height = 1000)
+# jpeg(filename = file.path(figures, "Map_allData.jpg"), quality = 100, res = 300, width = 2000, height = 1000)
+
+pdf(file = file.path(figures, "Map_allData.pdf"), 
+   width = 10, height = 5)
+
+
+
 mar=c(0,0,0,0)
 map("world",border="gray87",fill=TRUE, col="gray87",mar=rep(0,4))
 points(dsSPDF, col=transpBlack, bg = transpBlack, cex= coord$size, pch=19)
 
 
-sizes <- c(1, 100, 200, 300, 400, 500)
+sizes <- c(2, 100, 200, 300, 400, 500)
 cexsizes <- ((sizes-min(coord$nSites))/(max(coord$nSites)-min(coord$nSites)) * 2) + 0.5
 
 legend(x = -170, y = 2, legend = sizes, pch = 19, pt.cex =cexsizes, bty="n", cex = 0.7, 
@@ -92,7 +104,10 @@ labs <- c(
 "Other Multiple",                       
 "Unknown")     
 
-jpeg(filename = file.path(figures, "ExtractionMethods.jpg"), quality = 100, res = 300, width = 2000, height = 1500)
+# jpeg(filename = file.path(figures, "ExtractionMethods.jpg"), quality = 100, res = 300, width = 2000, height = 1500)
+pdf(file = file.path(figures, "ExtractionMethods.pdf"), 
+    width = 7, height = 6)
+
 par(mar = c(13, 4, 1, 1))
 b <- barplot(table(sites$ExtractionMethod), axisnames = FALSE)
 axis(1, at = b, labels = labs, las = 2)
@@ -103,7 +118,9 @@ dev.off()
 #######################################################
 # 6. Bar chart of all land uses/habitat covers
 ########################################################
-jpeg(filename = file.path(figures, "LUandHCFreq.jpg"), quality = 100, res = 300, width = 2200, height = 4000)
+# jpeg(filename = file.path(figures, "LUandHCFreq.jpg"), quality = 100, res = 300, width = 2200, height = 4000)
+pdf(file = file.path(figures, "LUandHCFreq.pdf"), 
+   width = 7, height = 14)
 
 par(mfrow = c(2, 1))
 sites$LandUse <- factor(sites$LandUse, levels = c("Primary vegetation", "Secondary vegetation", 
@@ -121,7 +138,7 @@ LULabs <- c("Primary vegetation", "Secondary vegetation",
 par(mar = c(9, 4, 1, 4))
 b <- barplot(table(sites$LandUse), axisnames = FALSE, xlim = c(0, 10),  xaxs = "i")
 axis(1, at = b, labels = LULabs, las = 2)
-mtext("(a)", side = 3, line = 0, at = 0, adj = 0.5)
+# mtext("(a)", side = 3, line = 0, at = 0, adj = 0.5)
 
 mtext("Number of sites", line =  2.5, side = 2)
 
@@ -139,7 +156,8 @@ plot(b,nStudies[,2],xaxs = "i", xlim=c(0,10),pch = 19,col="red",axes=FALSE,ylim=
 axis(4,at=seq(0,100,10), las = 2)
 mtext("Number of studies (red dots)", line =  2.5, side = 4)
 
-levels(sites$HabitatCover)[which(levels(sites$HabitatCover) == "Wetland")] <- "Wetland/Herbaceous"
+
+sites$HabitatCover[which(sites$HabitatCover == "Wetland")] <- "Wetland/Herbaceous"
 
 sites$HabitatCover <- factor(sites$HabitatCover, levels = c(
   "Broadleaf deciduous forest", "Broadleaf evergreen forest", "Needleleaf deciduous forest",
@@ -163,7 +181,7 @@ sites$HabitatCover <- droplevels(sites$HabitatCover)
 par(mar = c(12, 4, 1, 4))
 b <- barplot(table(sites$HabitatCover), axisnames = FALSE, xaxs = "i", xlim=c(0, 22))
 axis(1, at = b, labels = HCLabs, las = 2)
-mtext("(b)", side = 3, line = 0, at = 0, adj = 0.5)
+# mtext("(b)", side = 3, line = 0, at = 0, adj = 0.5)
 
 mtext("Number of sites", line =  2.5, side = 2)
 
@@ -263,7 +281,11 @@ big2 <-  4
 #--------------
 
 # jpeg(filename = file.path(figures, "N_Metrics.jpg"), quality = 100, res = 500, width = 7, height = 7, units = "in")
-jpeg(filename = file.path(figures, "N_Metrics_both.jpg"), quality = 100, res = 500, width = 14, height = 7, units = "in")
+# jpeg(filename = file.path(figures, "N_Metrics_both.jpg"), quality = 100, res = 500, width = 14, height = 7, units = "in")
+
+pdf(file = file.path(figures, "N_Metrics_both.pdf"),
+     width = 14, height = 7)
+
 par(mfrow=c(1,2))
 plot(0, xaxt = 'n', yaxt = 'n', bty = 'n', pch = '', ylab = '', xlab = '', ylim = c(1,8), xlim = c(1,10))
 
@@ -391,7 +413,7 @@ text(x = 1.7, y = 1.4, labels = "Abundance", cex = 1.5)
 text(x = 5, y = 8, labels = "Richness", cex = 1.5)
 text(x = 8.7, y = 1.4, labels = "Biomass", cex = 1.5)
 
-mtext("(a)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
+# mtext("(a)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
 
 
 
@@ -574,7 +596,7 @@ text(x = 5, y = 8, labels = "Richness", cex = 1.5)
 text(x = 8.7, y = 1.4, labels = "Biomass", cex = 1.5)
 
 
-mtext("(b)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
+# mtext("(b)", side = 3, line = 0, at = 0, adj = 0.1, cex = 2)
 
 dev.off()
 
